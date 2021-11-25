@@ -1,0 +1,6 @@
+[submodule "backend/neurone-forms"]
+	path = backend/neurone-forms
+	url = https://github.com/cccarl/neurone-forms
+[submodule "backend/neurone-search"]
+	path = backend/neurone-search
+	url = https://github.com/cccarl/neurone-search.git
