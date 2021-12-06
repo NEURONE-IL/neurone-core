@@ -4,3 +4,6 @@
 [submodule "backend/neurone-search"]
 	path = backend/neurone-search
 	url = https://github.com/cccarl/neurone-search.git
+[submodule "backend/neurone-profile"]
+	path = backend/neurone-profile
+	url = https://github.com/cccarl/neurone-profile.git
