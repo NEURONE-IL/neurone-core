@@ -1,0 +1,12 @@
+.main-logo {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 80%;
+}
+
+.welcome-text {
+  font-size: 2rem;
+  text-align: center;
+  color:salmon;
+}

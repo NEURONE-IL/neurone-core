@@ -1,0 +1,11 @@
+<img src="./assets/mainlogo.png" alt="NEURONE logo" class="main-logo">
+<p *ngIf="!userIsAuthenticated" class="welcome-text">Please log in to continue</p>
+<p *ngIf="userIsAuthenticated">
+  <a
+    mat-raised-button
+    (click)="onClick()"
+    color="primary"
+    style="text-align: center; margin: auto; display: flex; display: grid ">
+    Send a random number to database
+  </a>
+</p>

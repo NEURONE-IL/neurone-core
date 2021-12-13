@@ -1,0 +1,16 @@
+<p>
+  <mat-toolbar color="primary">
+    <span class="spacer"><a routerLink="/">NEURONE</a></span>
+    <ul>
+      <li *ngIf="!userIsAuthenticated">
+        <a mat-stroked-button class="navbar-button" routerLink="/login" routerLinkActive="mat-accent">Log in</a>
+      </li>
+      <li *ngIf="!userIsAuthenticated">
+        <a mat-stroked-button class="navbar-button" routerLink="/signup" routerLinkActive="mat-accent">Sign up</a>
+      </li>
+      <li *ngIf="userIsAuthenticated">
+        <a mat-stroked-button (click)="onLogout()" class="navbar-button" routerLinkActive="mat-accent">Log out</a>
+      </li>
+    </ul>
+  </mat-toolbar>
+</p>
