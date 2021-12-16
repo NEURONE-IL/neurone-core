@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
+import { AuthService } from "../auth.service";
 
 @Component({
   selector: 'app-neurone-navbar',
@@ -8,16 +9,24 @@ import { NgForm } from '@angular/forms';
 })
 export class NeuroneNavbarComponent implements OnInit {
 
+  // for parameters in HTML
+  @Input() a: number = 0;
   userIsAuthenticated = false;
   isLoading = false;
 
-  constructor() { }
+  constructor(public authService: AuthService) {}
 
   ngOnInit(): void {
+    console.log("From HTML: " + this.a);
   }
 
   onLogin(form: NgForm) {
-    console.log("works, WIP");
+    if (form.invalid){
+      return;
+    }
+
+    this.isLoading = true;
+    this.authService.login(form.value.email, form.value.password);
   }
 
   onLogout(){
