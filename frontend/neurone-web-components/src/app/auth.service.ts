@@ -31,11 +31,15 @@ export class AuthService {
   }
 
 
-  createUser(email: string, password: string) {
+  createUser(email: string, password: string, login?: boolean) {
     const authData: AuthData = { email: email, password: password }
     this.http.post("http://localhost:3005/auth/signup", authData) // TODO: change this to local env
       .subscribe(response => {
         console.log(response);
+
+        if (login) {
+          this.login(email, password);
+        }
       })
   }
 

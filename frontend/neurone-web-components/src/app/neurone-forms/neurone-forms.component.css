@@ -1,0 +1,16 @@
+.centered-wide {
+  width: 80%;
+  margin-left: 1rem;
+  margin-top: 1rem;
+  margin-right: 1rem;
+}
+
+.mat-radio-button {
+  margin: 0 12px;
+  margin-top: 1rem;
+}
+
+.mat-radio-group {
+  display:flex;
+  flex-direction: column;
+}

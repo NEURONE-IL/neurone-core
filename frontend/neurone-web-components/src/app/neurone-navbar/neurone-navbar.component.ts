@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
+import { Subscription } from 'rxjs';
 import { AuthService } from "../auth.service";
 
 @Component({
@@ -9,28 +10,40 @@ import { AuthService } from "../auth.service";
 })
 export class NeuroneNavbarComponent implements OnInit {
 
-  // for parameters in HTML
-  @Input() a: number = 0;
   userIsAuthenticated = false;
+  cardMode = 0; // 0 for login, 1 for sign in
   isLoading = false;
+  private authListenerSubs: Subscription | undefined;
 
   constructor(public authService: AuthService) {}
 
   ngOnInit(): void {
-    console.log("From HTML: " + this.a);
+    this.userIsAuthenticated = this.authService.getAuth();
+    // we get the login status from the service
+    this.authListenerSubs = this.authService
+      .getAuthStatusListener()
+      .subscribe( isAuthenticated => {
+        // with this we update the login status in this header
+        this.userIsAuthenticated = isAuthenticated;
+      })
   }
 
-  onLogin(form: NgForm) {
+  onCardButtonClick(form: NgForm) {
     if (form.invalid){
       return;
     }
 
-    this.isLoading = true;
-    this.authService.login(form.value.email, form.value.password);
+    if (this.cardMode === 1){
+      this.isLoading = true;
+      this.authService.login(form.value.email, form.value.password);
+    } else if (this.cardMode === 2){
+      this.isLoading = true;
+      this.authService.createUser(form.value.email, form.value.password, true);
+    }
   }
 
   onLogout(){
-    console.log("TODO");
+    this.authService.logout();
   }
 
 }

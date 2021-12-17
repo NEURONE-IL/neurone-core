@@ -12,14 +12,17 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatInputModule } from '@angular/material/input';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatRadioModule } from '@angular/material/radio';
 
 import { NeuroneNavbarComponent } from './neurone-navbar/neurone-navbar.component';
 import { AuthInterceptor } from './auth-interceptor';
+import { NeuroneFormsComponent } from './neurone-forms/neurone-forms.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    NeuroneNavbarComponent
+    NeuroneNavbarComponent,
+    NeuroneFormsComponent
   ],
   imports: [
     BrowserModule,
@@ -30,6 +33,7 @@ import { AuthInterceptor } from './auth-interceptor';
     MatProgressSpinnerModule,
     MatInputModule,
     MatToolbarModule,
+    MatRadioModule,
     HttpClientModule
   ],
   providers: [{ provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true}],
@@ -40,6 +44,7 @@ export class AppModule {
   constructor (private injector: Injector) {
     const elements: any[] = [
       [NeuroneNavbarComponent, "neurone-navbar"],
+      [NeuroneFormsComponent, "neurone-forms"],
     ]
 
     for (const [component, name] of elements){

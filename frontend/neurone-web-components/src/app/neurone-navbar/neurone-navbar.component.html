@@ -2,14 +2,11 @@
   <mat-toolbar color="primary">
     <span class="spacer"><a routerLink="/">NEURONE</a></span>
     <ul>
-      <li *ngIf="userIsAuthenticated">
-        <a mat-button routerLink="/create" routerLinkActive="mat-accent">Create New Post</a>
+      <li *ngIf="!userIsAuthenticated">
+        <a mat-button (click)="cardMode=1" >Login</a>
       </li>
       <li *ngIf="!userIsAuthenticated">
-        <a mat-button routerLink="/login" routerLinkActive="mat-accent">Login</a>
-      </li>
-      <li *ngIf="!userIsAuthenticated">
-        <a mat-button routerLink="/signup" routerLinkActive="mat-accent">Signup</a>
+        <a mat-button (click)="cardMode=2">Signup</a>
       </li>
       <li *ngIf="userIsAuthenticated">
         <button mat-button (click)="onLogout()">Logout</button>
@@ -17,36 +14,38 @@
     </ul>
   </mat-toolbar>
 </p>
+<div *ngIf="!userIsAuthenticated && cardMode != 0">
+  <mat-card>
+    <mat-spinner *ngIf="isLoading"></mat-spinner>
+    <form (submit)="onCardButtonClick(loginForm)" #loginForm="ngForm" *ngIf="!isLoading">
+      <mat-form-field>
+        <input
+          matInput
+          name="email"
+          ngModel
+          type="email"
+          placeholder="E-Mail"
+          #emailInput="ngModel"
+          required
+          email>
+        <mat-error *ngIf="emailInput.invalid">Please enter a valid email.</mat-error>
+      </mat-form-field>
+      <mat-form-field>
+        <input
+          type="password"
+          name="password"
+          ngModel
+          matInput
+          placeholder="Password"
+          #passwordInput="ngModel"
+          required>
+        <mat-error *ngIf="passwordInput.invalid">Please enter a valid password.</mat-error>
+      </mat-form-field>
+      <div class="button-row">
+        <button mat-raised-button color="primary" type="submit" *ngIf="!isLoading">{{ cardMode === 1 ? 'Sign in' : 'Create Account' }}</button>
+        <mat-spinner *ngIf="isLoading"></mat-spinner>
+      </div>
+    </form>
+  </mat-card>
+</div>
 
-<mat-card *ngIf="!userIsAuthenticated">
-  <mat-spinner *ngIf="isLoading"></mat-spinner>
-  <form (submit)="onLogin(loginForm)" #loginForm="ngForm" *ngIf="!isLoading">
-    <mat-form-field>
-      <input
-        matInput
-        name="email"
-        ngModel
-        type="email"
-        placeholder="E-Mail"
-        #emailInput="ngModel"
-        required
-        email>
-      <mat-error *ngIf="emailInput.invalid">Please enter a valid email.</mat-error>
-    </mat-form-field>
-    <mat-form-field>
-      <input
-        type="password"
-        name="password"
-        ngModel
-        matInput
-        placeholder="Password"
-        #passwordInput="ngModel"
-        required>
-      <mat-error *ngIf="passwordInput.invalid">Please enter a valid password.</mat-error>
-    </mat-form-field>
-    <div class="button-row">
-      <button mat-raised-button color="primary" type="submit" *ngIf="!isLoading">Login</button>
-      <mat-spinner *ngIf="isLoading"></mat-spinner>
-    </div>
-  </form>
-</mat-card>

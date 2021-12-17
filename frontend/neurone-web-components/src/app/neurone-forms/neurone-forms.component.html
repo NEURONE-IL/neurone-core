@@ -1,0 +1,25 @@
+<div>
+  <mat-form-field appearance="outline" class="centered-wide">
+    <mat-label>{{ title }}</mat-label>
+    <input matInput>
+    <mat-hint>{{ hint }}</mat-hint>
+  </mat-form-field>
+</div>
+<div>
+  <mat-form-field appearance="fill" class="centered-wide">
+    <mat-label>{{ title }}</mat-label>
+    <textarea matInput></textarea>
+    <mat-hint>{{ hint }}</mat-hint>
+  </mat-form-field>
+</div>
+
+<div class="centered-wide">
+  <label><b>{{title}}</b></label>
+  <mat-radio-group aria-label="Select an option">
+    <div *ngFor="let option of radioOptions; index as i">
+      <mat-radio-button [value]="i">{{option}}</mat-radio-button>
+    </div>
+  </mat-radio-group>
+</div>
+
+<!-- " <mat-radio-button [name]="i.toString()" [value]='i.toString()'>{{option + " " + i}} </mat-radio-button>-->
