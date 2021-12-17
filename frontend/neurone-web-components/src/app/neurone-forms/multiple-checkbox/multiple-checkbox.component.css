@@ -3,14 +3,15 @@
   margin-left: 1rem;
   margin-top: 1rem;
   margin-right: 1rem;
+  margin-bottom: 2rem;
 }
 
-.mat-radio-button {
+.mat-checkbox {
   margin: 0 12px;
   margin-top: 1rem;
 }
 
-.mat-radio-group {
-  display:flex;
-  flex-direction: column;
+.hint {
+  color: grey;
+  margin-bottom: 0rem;
 }

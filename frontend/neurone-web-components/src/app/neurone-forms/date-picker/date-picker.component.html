@@ -1,0 +1,7 @@
+<h4 class="title">{{title}}</h4>
+<mat-form-field class="centered-wide">
+  <mat-label>Choose a date</mat-label>
+  <input matInput [matDatepicker]="picker">
+  <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+  <mat-datepicker #picker></mat-datepicker>
+</mat-form-field>

@@ -1,0 +1,11 @@
+<div class="centered-wide">
+  <h4>{{ title }}</h4>
+  <mat-form-field>
+    <mat-label>Pick an option</mat-label>
+    <mat-select>
+      <mat-option *ngFor="let option of optionsObj" [value]="option.value">
+        {{option.viewValue}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+</div>

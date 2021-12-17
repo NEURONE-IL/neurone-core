@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { NeuroneFormsComponent } from './neurone-forms.component';
+import { ParagraphComponent } from './paragraph.component';
 
-describe('NeuroneFormsComponent', () => {
-  let component: NeuroneFormsComponent;
-  let fixture: ComponentFixture<NeuroneFormsComponent>;
+describe('ParagraphComponent', () => {
+  let component: ParagraphComponent;
+  let fixture: ComponentFixture<ParagraphComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ NeuroneFormsComponent ]
+      declarations: [ ParagraphComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(NeuroneFormsComponent);
+    fixture = TestBed.createComponent(ParagraphComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

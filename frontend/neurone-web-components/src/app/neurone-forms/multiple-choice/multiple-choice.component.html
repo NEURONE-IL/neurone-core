@@ -1,0 +1,9 @@
+<div class="centered-wide">
+  <label><b>{{title}}</b></label>
+  <p class="hint" *ngIf="hint!=''">{{hint}}</p>
+  <mat-radio-group aria-label="Select an option">
+    <div *ngFor="let option of radioOptions; index as i">
+      <mat-radio-button [value]="i">{{option}}</mat-radio-button>
+    </div>
+  </mat-radio-group>
+</div>
