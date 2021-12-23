@@ -14,4 +14,8 @@ export class AppComponent implements OnInit {
   ngOnInit(): void {
     this.authService.autoAuthUser();
   }
+
+  onSubmit(){
+    console.log("works");
+  }
 }

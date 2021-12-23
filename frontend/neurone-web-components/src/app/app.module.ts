@@ -27,6 +27,7 @@ import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
 import { ListComponent } from './neurone-forms/list/list.component';
 import { DatePickerComponent } from './neurone-forms/date-picker/date-picker.component';
 import { MatNativeDateModule } from '@angular/material/core';
+import { SubmitComponent } from './neurone-forms/submit/submit.component';
 
 @NgModule({
   declarations: [
@@ -37,7 +38,8 @@ import { MatNativeDateModule } from '@angular/material/core';
     MultipleChoiceComponent,
     MultipleCheckboxComponent,
     ListComponent,
-    DatePickerComponent
+    DatePickerComponent,
+    SubmitComponent
   ],
   imports: [
     BrowserModule,

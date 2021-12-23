@@ -1,7 +1,9 @@
 <div>
   <mat-form-field class="centered-wide">
     <mat-label>{{ title }}</mat-label>
-    <input matInput>
+    <input matInput [(ngModel)]="userInput" form="neuroneSubmit" [required]="required==='true'">
+    <mat-error>Required Field</mat-error>
     <mat-hint>{{ hint }}</mat-hint>
   </mat-form-field>
+
 </div>

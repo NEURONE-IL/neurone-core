@@ -1,0 +1,6 @@
+<form id="neuroneSubmit" (submit)="onSubmit()">
+  <div class="submit-button">
+    <button mat-raised-button color="primary" type="submit" *ngIf="!isLoading">{{ title }}</button>
+    <mat-spinner *ngIf="isLoading"></mat-spinner>
+  </div>
+</form>

@@ -33,10 +33,10 @@ export class AuthService {
 
   createUser(email: string, password: string, login?: boolean) {
     const authData: AuthData = { email: email, password: password }
-    this.http.post("http://localhost:3005/auth/signup", authData) // TODO: change this to local env
+    this.http.post("http://localhost:3005/auth/signup", authData) // TODO: change this port to local env
       .subscribe(response => {
         console.log(response);
-
+        // auto login
         if (login) {
           this.login(email, password);
         }
@@ -69,6 +69,7 @@ export class AuthService {
     if (!authInformation) {
       return;
     }
+    this.userId = authInformation.userId;
     const now = new Date();
     const expiresIn = authInformation.expirationDate.getTime() - now.getTime();
     console.log(authInformation, expiresIn);
@@ -111,14 +112,16 @@ export class AuthService {
   }
 
   private getAuthData() {
-    const token = localStorage.getItem("token");
-    const expirationDate = localStorage.getItem("expiration");
-    if (!token || !expirationDate) {
+    const token = localStorage.getItem('token');
+    const expirationDate = localStorage.getItem('expiration');
+    const userId = localStorage.getItem('userId');
+    if (!token || !expirationDate || !userId) {
       return;
     }
     return{
       token: token,
-      expirationDate: new Date(expirationDate)
+      expirationDate: new Date(expirationDate),
+      userId: userId
     }
 
   }

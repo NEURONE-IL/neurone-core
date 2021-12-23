@@ -11,7 +11,7 @@ import { AuthService } from "../auth.service";
 export class NeuroneNavbarComponent implements OnInit {
 
   userIsAuthenticated = false;
-  cardMode = 0; // 0 for login, 1 for sign in
+  cardMode: "hidden" | "signin" | "signup" = "hidden";
   isLoading = false;
   private authListenerSubs: Subscription | undefined;
 
@@ -33,10 +33,10 @@ export class NeuroneNavbarComponent implements OnInit {
       return;
     }
 
-    if (this.cardMode === 1){
+    if (this.cardMode === "signin"){
       this.isLoading = true;
       this.authService.login(form.value.email, form.value.password);
-    } else if (this.cardMode === 2){
+    } else if (this.cardMode === "signup"){
       this.isLoading = true;
       this.authService.createUser(form.value.email, form.value.password, true);
     }

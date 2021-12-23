@@ -3,10 +3,10 @@
     <span class="spacer"><a routerLink="/">NEURONE</a></span>
     <ul>
       <li *ngIf="!userIsAuthenticated">
-        <a mat-button (click)="cardMode=1" >Login</a>
+        <a mat-button (click)="cardMode='signin'" >Login</a>
       </li>
       <li *ngIf="!userIsAuthenticated">
-        <a mat-button (click)="cardMode=2">Signup</a>
+        <a mat-button (click)="cardMode='signup'">Signup</a>
       </li>
       <li *ngIf="userIsAuthenticated">
         <button mat-button (click)="onLogout()">Logout</button>
@@ -14,7 +14,7 @@
     </ul>
   </mat-toolbar>
 </p>
-<div *ngIf="!userIsAuthenticated && cardMode != 0">
+<div *ngIf="!userIsAuthenticated && cardMode != 'hidden'">
   <mat-card>
     <mat-spinner *ngIf="isLoading"></mat-spinner>
     <form (submit)="onCardButtonClick(loginForm)" #loginForm="ngForm" *ngIf="!isLoading">
@@ -42,7 +42,8 @@
         <mat-error *ngIf="passwordInput.invalid">Please enter a valid password.</mat-error>
       </mat-form-field>
       <div class="button-row">
-        <button mat-raised-button color="primary" type="submit" *ngIf="!isLoading">{{ cardMode === 1 ? 'Sign in' : 'Create Account' }}</button>
+        <button mat-raised-button color="primary" type="submit" *ngIf="!isLoading">{{ cardMode === 'signin' ? 'Sign in' : 'Create Account' }}</button>
+        <button mat-raised-button color="warn" (click)="cardMode='hidden'" type="button" *ngIf="!isLoading">Cancel</button>
         <mat-spinner *ngIf="isLoading"></mat-spinner>
       </div>
     </form>
