@@ -1,6 +1,6 @@
 import { Injector, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { FormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { createCustomElement } from '@angular/elements';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http'
 
@@ -19,15 +19,16 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 
 import { NeuroneNavbarComponent } from './neurone-navbar/neurone-navbar.component';
 import { AuthInterceptor } from './auth-interceptor';
-import { InputComponent } from './neurone-forms/input/input.component';
-import { ParagraphComponent } from './neurone-forms/paragraph/paragraph.component';
-import { MultipleChoiceComponent } from './neurone-forms/multiple-choice/multiple-choice.component';
-import { MultipleCheckboxComponent } from './neurone-forms/multiple-checkbox/multiple-checkbox.component';
+import { InputComponent } from './neurone-forms-old/input/input.component';
+import { ParagraphComponent } from './neurone-forms-old/paragraph/paragraph.component';
+import { MultipleChoiceComponent } from './neurone-forms-old/multiple-choice/multiple-choice.component';
+import { MultipleCheckboxComponent } from './neurone-forms-old/multiple-checkbox/multiple-checkbox.component';
 import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
-import { ListComponent } from './neurone-forms/list/list.component';
-import { DatePickerComponent } from './neurone-forms/date-picker/date-picker.component';
+import { ListComponent } from './neurone-forms-old/list/list.component';
+import { DatePickerComponent } from './neurone-forms-old/date-picker/date-picker.component';
 import { MatNativeDateModule } from '@angular/material/core';
-import { SubmitComponent } from './neurone-forms/submit/submit.component';
+import { SubmitComponent } from './neurone-forms-old/submit/submit.component';
+import { NeuroneFormsComponent } from './neurone-forms/neurone-forms.component';
 
 @NgModule({
   declarations: [
@@ -39,11 +40,13 @@ import { SubmitComponent } from './neurone-forms/submit/submit.component';
     MultipleCheckboxComponent,
     ListComponent,
     DatePickerComponent,
-    SubmitComponent
+    SubmitComponent,
+    NeuroneFormsComponent
   ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
+    ReactiveFormsModule,
     FormsModule,
     MatButtonModule,
     MatCardModule,

@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { AuthService } from 'src/app/auth.service';
-import { FormService } from 'src/app/neurone-forms/form.service';
+import { FormService } from '../form.service';
 
 @Component({
   selector: 'app-neurone-forms-input',

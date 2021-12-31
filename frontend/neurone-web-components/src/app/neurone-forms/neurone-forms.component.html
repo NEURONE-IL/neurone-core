@@ -1,0 +1,103 @@
+<!--todo: if there isn't any valid make this dissapear with a *ngIf-->
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+
+  <div  *ngFor="let control of jsonFormData?.controls">
+    <mat-form-field class="centered-wide" *ngIf="['input', 'paragraph', 'datepicker'].includes(control.type)">
+      <mat-label>{{control.title}}</mat-label>
+      <input
+        *ngIf="control.type==='input'"
+        [type]="control.type"
+        [formControlName]="control.name"
+        [value]="control.value"
+        matInput>
+      <textarea
+        *ngIf="control.type==='paragraph'"
+        [type]="control.type"
+        [formControlName]="control.name"
+        [value]="control.value"
+        matInput >
+      </textarea>
+      <div *ngIf="control.type==='datepicker'">
+        <input matInput [matDatepicker]="picker" [formControlName]="control.name">
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </div>
+
+      <mat-hint>{{ control.hint }}</mat-hint>
+    </mat-form-field>
+
+    <div class="centered-wide" *ngIf="control.type==='checkbox'">
+      <b>{{ control.title }}</b>
+      <p class="hint">{{ control.hint }}</p>
+      <section *ngFor="let option of control.choices; index as i">
+        <mat-checkbox
+
+          [value]="control.value"
+          [formControlName]="control.choices ? (control.name + ' - ' + control.choices[i]) : control.name"
+          >{{ option }}</mat-checkbox>
+      </section>
+    </div>
+
+    <div class="centered-wide" *ngIf="control.type==='radio'">
+      <label><b>{{ control.title + (control.validators.required ? "*" : "") }}</b></label>
+      <p class="hint" *ngIf="control.hint!=''">{{control.hint}}</p>
+      <mat-error *ngIf="submitAttempted && !form.valid && control.validators.required">Required</mat-error>
+      <mat-radio-group
+        aria-label="Select an option"
+        [formControlName]="control.name">
+        <div *ngFor="let option of control.choices; index as i">
+          <mat-radio-button
+            [value]="control.choices ? control.choices[i] : control.name"
+          >
+            {{option}}
+          </mat-radio-button>
+        </div>
+      </mat-radio-group>
+    </div>
+
+    <div class="centered-wide" *ngIf="control.type==='dropdown'">
+      <h4>{{ control.title }}</h4>
+      <mat-form-field>
+        <mat-label>{{control.hint}}</mat-label>
+        <mat-select [formControlName]="control.name">
+          <div *ngFor="let choice of control.choices; index as i">
+            <mat-option [value]="control.choices ? control.choices[i] : control.name">
+              {{choice}}
+            </mat-option>
+          </div>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <div class="centered-wide" *ngIf="control.type==='scale'">
+      <label><b>{{ control.title + (control.validators.required ? "*" : "") }}</b></label>
+      <p class="hint" *ngIf="control.hint!=''">{{control.hint}}</p>
+      <mat-error *ngIf="submitAttempted && !form.valid && control.validators.required">Required</mat-error>
+      <mat-radio-group
+        aria-label="Select an option"
+        [formControlName]="control.name">
+        <table>
+          <tr>
+            <td class="scale-label" *ngIf="control.scaleOptions.minLabel">{{ control.scaleOptions.minLabel }}</td>
+            <td *ngFor="let i of getRange(control.scaleOptions.min, control.scaleOptions.max, control.scaleOptions.step); index as index">
+              <mat-radio-button
+                [value]="i"
+              >
+                {{ i }}
+              </mat-radio-button>
+            </td>
+            <td class="scale-label" *ngIf="control.scaleOptions.maxLabel">{{ control.scaleOptions.maxLabel }}</td>
+          </tr>
+        </table>
+      </mat-radio-group>
+    </div>
+
+  </div>
+
+  <div class="submit-button">
+    <button mat-raised-button color="primary" type="submit">Submit</button>
+    <mat-spinner *ngIf="isLoading"></mat-spinner>
+  </div>
+
+
+</form>
