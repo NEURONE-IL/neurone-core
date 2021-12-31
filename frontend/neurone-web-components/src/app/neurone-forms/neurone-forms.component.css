@@ -1,0 +1,43 @@
+.centered-wide {
+  width: 80%;
+  margin-left: 1rem;
+  margin-top: 1rem;
+  margin-right: 1rem;
+}
+
+.title {
+  margin-left: 1rem;
+  margin-bottom: 0rem;
+}
+
+.submit-button {
+  margin-left: 1rem;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.hint {
+  color: grey;
+  margin-bottom: 0rem;
+}
+
+.mat-checkbox {
+  margin: 0 12px;
+  margin-top: 1rem;
+}
+
+.mat-radio-button {
+  margin: 0 12px;
+  margin-top: 1rem;
+}
+
+.mat-radio-group {
+  display:flex;
+  flex-direction: column;
+}
+
+.scale-label {
+  padding-top: 1rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
