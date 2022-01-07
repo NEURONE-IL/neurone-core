@@ -4,7 +4,7 @@ import { Subscription } from 'rxjs';
 import { AuthService } from "../auth.service";
 
 @Component({
-  selector: 'app-neurone-navbar',
+  selector: 'neurone-navbar-component',
   templateUrl: './neurone-navbar.component.html',
   styleUrls: ['./neurone-navbar.component.css']
 })

@@ -6,7 +6,7 @@ interface Options {
 }
 
 @Component({
-  selector: 'app-neurone-forms-list',
+  selector: 'neurone-dropdown',
   templateUrl: './list.component.html',
   styleUrls: ['./list.component.css', '../neurone-forms-style.css']
 })

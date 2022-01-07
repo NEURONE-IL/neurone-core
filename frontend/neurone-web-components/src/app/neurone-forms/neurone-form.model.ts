@@ -25,6 +25,7 @@ export interface JsonFormControls {
   value: string;
   placeholder?: string;
   type: string;
+  stars: number;
   choices?: string[];
   scaleOptions: JsonScaleControls;
   validators: JsonFormValidators;

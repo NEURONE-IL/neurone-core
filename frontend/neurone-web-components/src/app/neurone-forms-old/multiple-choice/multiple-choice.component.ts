@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 
 @Component({
-  selector: 'app-neurone-forms-multiple-choice',
+  selector: 'neurone-multiple-choice',
   templateUrl: './multiple-choice.component.html',
   styleUrls: ['./multiple-choice.component.css']
 })

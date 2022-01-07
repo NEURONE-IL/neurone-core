@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 
 @Component({
-  selector: 'app-neurone-forms-date-picker',
+  selector: 'neurone-date-picker',
   templateUrl: './date-picker.component.html',
   styleUrls: ['./date-picker.component.css', '../neurone-forms-style.css']
 })

@@ -3,7 +3,7 @@ import { AuthService } from 'src/app/auth.service';
 import { FormService } from '../form.service';
 
 @Component({
-  selector: 'app-neurone-forms-paragraph',
+  selector: 'neurone-paragraph',
   templateUrl: './paragraph.component.html',
   styleUrls: ['./paragraph.component.css']
 })

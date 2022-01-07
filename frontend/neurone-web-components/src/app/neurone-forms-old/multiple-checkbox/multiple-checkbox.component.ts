@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 
 @Component({
-  selector: 'app-neurone-forms-multiple-checkbox',
+  selector: 'neurone-multiple-checkbox',
   templateUrl: './multiple-checkbox.component.html',
   styleUrls: ['./multiple-checkbox.component.css']
 })

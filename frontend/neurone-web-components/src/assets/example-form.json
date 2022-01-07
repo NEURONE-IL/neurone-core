@@ -71,12 +71,32 @@
       "scaleOptions": {
         "min": 0,
         "max": 100,
-        "step": 20,
+        "step": 50,
         "minLabel": "bad",
         "maxLabel": "life saving"
       },
       "validators": {
         "required": true
+      }
+    },
+    {
+      "title": "How many stars?",
+      "hint": "Pick anything!",
+      "name": "ratingExample",
+      "type": "rating",
+      "stars": 6,
+      "validators": {
+        "required": true
+      }
+    },
+    {
+      "title": "How many stars? Part 2",
+      "hint": "Pick anything!",
+      "name": "ratingExample2",
+      "type": "rating",
+      "stars": 10,
+      "validators": {
+        "required": false
       }
     }
   ]

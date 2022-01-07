@@ -10,6 +10,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import {MatIconModule} from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatRadioModule } from '@angular/material/radio';
@@ -29,6 +30,7 @@ import { DatePickerComponent } from './neurone-forms-old/date-picker/date-picker
 import { MatNativeDateModule } from '@angular/material/core';
 import { SubmitComponent } from './neurone-forms-old/submit/submit.component';
 import { NeuroneFormsComponent } from './neurone-forms/neurone-forms.component';
+import { MouseDirective } from './neurone-logger/mouse.directive';
 
 @NgModule({
   declarations: [
@@ -41,7 +43,8 @@ import { NeuroneFormsComponent } from './neurone-forms/neurone-forms.component';
     ListComponent,
     DatePickerComponent,
     SubmitComponent,
-    NeuroneFormsComponent
+    NeuroneFormsComponent,
+    MouseDirective
   ],
   imports: [
     BrowserModule,
@@ -58,6 +61,7 @@ import { NeuroneFormsComponent } from './neurone-forms/neurone-forms.component';
     MatSelectModule,
     MatDatepickerModule,
     MatNativeDateModule,
+    MatIconModule,
     HttpClientModule
   ],
   providers: [

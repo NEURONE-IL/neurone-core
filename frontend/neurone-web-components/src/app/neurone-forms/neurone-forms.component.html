@@ -1,8 +1,11 @@
+<!--star rating style-->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
 <!--todo: if there isn't any valid make this dissapear with a *ngIf-->
 <form [formGroup]="form" (ngSubmit)="onSubmit()">
 
   <div  *ngFor="let control of jsonFormData?.controls">
-    <mat-form-field class="centered-wide" *ngIf="['input', 'paragraph', 'datepicker'].includes(control.type)">
+    <mat-form-field class="neurone-form" *ngIf="['input', 'paragraph', 'datepicker'].includes(control.type)">
       <mat-label>{{control.title}}</mat-label>
       <input
         *ngIf="control.type==='input'"
@@ -26,7 +29,7 @@
       <mat-hint>{{ control.hint }}</mat-hint>
     </mat-form-field>
 
-    <div class="centered-wide" *ngIf="control.type==='checkbox'">
+    <div class="neurone-form" *ngIf="control.type==='checkbox'">
       <b>{{ control.title }}</b>
       <p class="hint">{{ control.hint }}</p>
       <section *ngFor="let option of control.choices; index as i">
@@ -38,7 +41,7 @@
       </section>
     </div>
 
-    <div class="centered-wide" *ngIf="control.type==='radio'">
+    <div class="neurone-form" *ngIf="control.type==='radio'">
       <label><b>{{ control.title + (control.validators.required ? "*" : "") }}</b></label>
       <p class="hint" *ngIf="control.hint!=''">{{control.hint}}</p>
       <mat-error *ngIf="submitAttempted && !form.valid && control.validators.required">Required</mat-error>
@@ -55,7 +58,7 @@
       </mat-radio-group>
     </div>
 
-    <div class="centered-wide" *ngIf="control.type==='dropdown'">
+    <div class="neurone-form" *ngIf="control.type==='dropdown'">
       <h4>{{ control.title }}</h4>
       <mat-form-field>
         <mat-label>{{control.hint}}</mat-label>
@@ -69,7 +72,7 @@
       </mat-form-field>
     </div>
 
-    <div class="centered-wide" *ngIf="control.type==='scale'">
+    <div class="neurone-form" *ngIf="control.type==='scale'">
       <label><b>{{ control.title + (control.validators.required ? "*" : "") }}</b></label>
       <p class="hint" *ngIf="control.hint!=''">{{control.hint}}</p>
       <mat-error *ngIf="submitAttempted && !form.valid && control.validators.required">Required</mat-error>
@@ -92,11 +95,28 @@
       </mat-radio-group>
     </div>
 
+
+    <!--rating form-->
+    <!--based on https://stackblitz.com/edit/angular-material-star-rating-ajhmzf?file=app%2Fstar-rating%2Fstar-rating.component.ts-->
+    <div *ngIf="control.type==='rating'" class="neurone-form">
+      <label><strong>{{ control.title + (control.validators.required ? "*" : "") }}</strong></label>
+      <p class="hint" *ngIf="control.hint!=''">{{control.hint}}</p>
+      <button mat-icon-button color="primary" type="button" *ngFor="let ratingId of getRange(1, control.stars, 1);index as i" [id]="'star_'+i" (click)="onStarClick(i+1, control.name)">
+        <mat-icon>
+          {{showStar(i, control.name)}}
+        </mat-icon>
+      </button>
+      <mat-error *ngIf="(!form.controls[control.name].value) && !form.valid && submitAttempted && control.validators.required">
+        Star count is <strong>required</strong>.
+      </mat-error>
+    </div>
+
   </div>
 
   <div class="submit-button">
     <button mat-raised-button color="primary" type="submit">Submit</button>
     <mat-spinner *ngIf="isLoading"></mat-spinner>
+    <mat-error *ngIf="submitError">Error sumbitting. Please contact the admin of the questionnaire.</mat-error>
   </div>
 
 
