@@ -12,68 +12,71 @@ import { AuthService } from '../auth.service';
 })
 export class NeuroneFormsComponent implements OnChanges, OnInit {
 
-  @Input() jsonFormDataFile: string = "";
-  jsonFormData: JsonFormData = { id: "", controls: [] }
+  @Input() formName: string = "";
+  @Input() mode: "creator" | "answer" = "answer"; // creator to enable saving/deleting the form in the database, answer to simply answer the form
+  jsonFormData: JsonFormData = { formName: "", controls: [] }
 
   form: FormGroup = this.formBuilder.group({});
   submitAttempted = false;
   isLoading = false;
   submitError = false;
+  localFormError = false;
+  deleteFormError = false;
+  saveButtonText = "";
+  deleteButtonText = "";
 
   constructor(private authService: AuthService, private http: HttpClient, private formBuilder: FormBuilder) { }
 
   ngOnInit(): void {
     // load default example file if there isn't an input
-    if (this.jsonFormDataFile === ""){
-      this.loadFormConfigFile("/assets/example-form.json");
+    if (this.formName === ""){
+      this.loadForm("questionnaire_example");
     }
   }
 
   ngOnChanges(changes: SimpleChanges) {
 
-    console.log("Form data has changed\n");
+    //console.log("Form data has changed\n");
 
     // load input file
-    if (this.jsonFormDataFile !== "") {
-      this.loadFormConfigFile("/assets/" + this.jsonFormDataFile);
-    }
-
-    console.log(this.jsonFormData);
-    if (this.jsonFormData.controls.length !== 0) {
-      console.log("Not empty");
-    }
-    else {
-      console.log("Empty");
+    if (this.formName !== "") {
+      this.loadForm(this.formName);
     }
   }
 
-  // for the rating form
-  onStarClick(rating: number, controlName: string) {
-    this.form.controls[controlName].patchValue(rating);
-    console.log(rating);
-    return;
-  }
-
-  // for the rating form
-  showStar(index:number, controlName: string) {
-
-    if (this.form.controls[controlName].value >= index + 1) {
-      return 'star';
-    } else {
-      return 'star_border';
+  loadForm(formName: string) {
+    if (this.mode == "answer"){
+      // todo: change port to env
+      this.http
+      .get("http://localhost:3002/form/" + formName)
+      .subscribe((value: any) => {
+        this.jsonFormData = value.form;
+        /*
+        console.log("JSON LOADED:\n");
+        console.log(this.jsonFormData);
+        */
+        this.createForm(this.jsonFormData.controls);
+      });
     }
-
-  }
-
-  loadFormConfigFile(file: string) {
-    this.http
-    .get(file)
-    .subscribe((value: any) => {
-      this.jsonFormData = value;
-      console.log("JSON LOADED:\n");
-      console.log(this.jsonFormData);
-      this.createForm(this.jsonFormData.controls);
-    });
+    else if (this.mode == "creator") {
+      this.http
+      .get(formName)
+      .subscribe({
+        next: (value: any) => {
+          this.jsonFormData = value;
+          /*
+          console.log("JSON LOADED:\n");
+          console.log(this.jsonFormData);
+          */
+          this.localFormError = false;
+          this.createForm(this.jsonFormData.controls);
+        },
+        error: (error) => {
+          this.localFormError = true;
+          console.error(error);
+        }
+      });
+    }
   }
 
   createForm(controls: JsonFormControls[]){
@@ -139,13 +142,34 @@ export class NeuroneFormsComponent implements OnChanges, OnInit {
     console.log(this.form);
   }
 
-  onSubmit() {
+
+  // for the rating form
+  onStarClick(rating: number, controlName: string) {
+    this.form.controls[controlName].patchValue(rating);
+    return;
+  }
+
+  // for the rating form
+  showStar(index:number, controlName: string) {
+
+    if (this.form.controls[controlName].value >= index + 1) {
+      return 'star';
+    } else {
+      return 'star_border';
+    }
+
+  }
+
+  onSubmitAnswers() {
     this.isLoading = true;
 
     // show that the form has been attempted to be submitted at least once
     this.submitAttempted = true;
+
+    /*
     console.log('Form valid: ', this.form.valid);
     console.log('Form values: ', this.form.value);
+    */
 
     // don't submit if form isn't valid
     if (!this.form.valid) {
@@ -157,12 +181,10 @@ export class NeuroneFormsComponent implements OnChanges, OnInit {
     let questions: Object[] = [];
     const clientDate = Date.now();
     const userId = this.authService.getUserId();
-    const formId = this.jsonFormData.id;
+    const formId = this.jsonFormData.formName;
 
     let formData = { questions: questions, clientDate: clientDate, userId: userId, formId: formId };
     console.log(formData);
-
-    console.log(this.form.value.inputExample2);
 
     // get all questions/forms and add them to the questions array in a fashion compatible with backend
     for (let control of this.jsonFormData.controls){
@@ -178,7 +200,6 @@ export class NeuroneFormsComponent implements OnChanges, OnInit {
 
           for (let choice of control.choices){
             const controlNameCheckbox = control.name + ' - ' + choice;
-            console.log("CONTROL NAME: " + controlNameCheckbox);
             const formQuestionOption = { question: choice, answer: this.form.value[controlNameCheckbox]}
             formQuestion.answer.push(formQuestionOption);
           }
@@ -195,9 +216,9 @@ export class NeuroneFormsComponent implements OnChanges, OnInit {
     this.http.post("http://localhost:3002/profile/form", formData)
       .subscribe({
         next: response => {
-          console.log(response);
           this.isLoading = false;
           this.submitError = false;
+          console.log(response);
         },
         error: error => {
           this.isLoading = false;
@@ -205,17 +226,44 @@ export class NeuroneFormsComponent implements OnChanges, OnInit {
           console.error(error);
         }
       });
+  }
 
+  onSubmitForm() {
 
     // send the current questionnaire to the backend
     const formDataQuestionnaire = {
-      name: this.jsonFormData.id,
+      formName: this.jsonFormData.formName,
       questions: this.jsonFormData.controls
     }
 
-    this.http.post("http://localhost:3002/form/save", formDataQuestionnaire)
-      .subscribe(response => {
-        console.log(response);
+    // todo: change to env port
+    this.http.put("http://localhost:3002/form/" + formDataQuestionnaire.formName, formDataQuestionnaire)
+      .subscribe({
+        next: response => {
+          this.saveButtonText = "Saved!";
+          console.log(response);
+        },
+        error: error => {
+          this.saveButtonText = "Error saving";
+          console.error(error);
+        }
+      });
+
+    return;
+  }
+
+  onDeleteForm() {
+    // todo: change to env port
+    this.http.delete("http://localhost:3002/form/" + this.jsonFormData.formName)
+      .subscribe({
+        next: response => {
+          this.deleteButtonText = "Deleted!";
+          console.log(response);
+        },
+        error: error => {
+          this.deleteButtonText = "Could not delete form.";
+          console.error(error);
+        }
       });
   }
 

@@ -1,5 +1,5 @@
 {
-  "id": "questionnaire_example1",
+  "formName": "example_file",
   "controls": [
     {
       "title": "Example Title",

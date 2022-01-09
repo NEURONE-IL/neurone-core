@@ -32,6 +32,6 @@ export interface JsonFormControls {
 }
 
 export interface JsonFormData {
-  id: string;
+  formName: string;
   controls: JsonFormControls[];
 }

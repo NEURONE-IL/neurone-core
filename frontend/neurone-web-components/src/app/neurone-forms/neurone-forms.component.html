@@ -2,7 +2,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
 <!--todo: if there isn't any valid make this dissapear with a *ngIf-->
-<form [formGroup]="form" (ngSubmit)="onSubmit()">
+<form [formGroup]="form" (ngSubmit)="onSubmitAnswers()">
 
   <div  *ngFor="let control of jsonFormData?.controls">
     <mat-form-field class="neurone-form" *ngIf="['input', 'paragraph', 'datepicker'].includes(control.type)">
@@ -117,6 +117,20 @@
     <button mat-raised-button color="primary" type="submit">Submit</button>
     <mat-spinner *ngIf="isLoading"></mat-spinner>
     <mat-error *ngIf="submitError">Error sumbitting. Please contact the admin of the questionnaire.</mat-error>
+  </div>
+
+  <div class="submit-button" *ngIf="mode==='creator'">
+    <mat-error *ngIf="localFormError">Local form file "{{ formName }}" not found.</mat-error>
+    <button mat-raised-button color="warn" type="button" (click)="onSubmitForm()">Save form in databse</button>
+    <mat-spinner *ngIf="isLoading"></mat-spinner>
+    <p style="color:blue">{{ saveButtonText }}</p>
+  </div>
+
+  <div class="submit-button" *ngIf="mode==='creator'">
+    <button mat-raised-button color="warn" type="button" (click)="onDeleteForm()">Delete form in databse</button>
+    <mat-spinner *ngIf="isLoading"></mat-spinner>
+    <p style="color:red">{{ deleteButtonText }}</p>
+    <mat-error *ngIf="deleteFormError">Failed to delete form "{{ formName }}" from database.</mat-error>
   </div>
 
 
