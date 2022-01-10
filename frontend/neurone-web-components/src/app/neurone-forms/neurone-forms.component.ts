@@ -3,62 +3,93 @@ import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/cor
 import { JsonFormData, JsonFormControls } from './neurone-form.model';
 import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 import { AuthService } from '../auth.service';
+import { Subscription } from 'rxjs';
 
 
 @Component({
-  selector: 'neurone-forms',
+  selector: 'app-neurone-forms',
   templateUrl: './neurone-forms.component.html',
   styleUrls: ['./neurone-forms.component.css']
 })
 export class NeuroneFormsComponent implements OnChanges, OnInit {
 
-  @Input() formName: string = "";
+  @Input('form') formName = "";
   @Input() mode: "creator" | "answer" = "answer"; // creator to enable saving/deleting the form in the database, answer to simply answer the form
-  jsonFormData: JsonFormData = { formName: "", controls: [] }
+  jsonFormData: JsonFormData = { formName: "plalceholder", controls: [] }
 
   form: FormGroup = this.formBuilder.group({});
   submitAttempted = false;
   isLoading = false;
   submitError = false;
-  localFormError = false;
+  loadFormError = false;
   deleteFormError = false;
   saveButtonText = "";
   deleteButtonText = "";
 
+  private authListenerSubs: Subscription | undefined;
+  userIsAuthenticated = false;
+
   constructor(private authService: AuthService, private http: HttpClient, private formBuilder: FormBuilder) { }
 
   ngOnInit(): void {
-    // load default example file if there isn't an input
-    if (this.formName === ""){
-      this.loadForm("questionnaire_example");
+    // load input file
+    if (this.formName !== "") {
+      this.loadForm(this.formName);
     }
+    // load default example file if there isn't an input
+    else if (this.formName === "" && this.mode === "creator"){
+      this.formName = "assets/example-form.json";
+      this.loadForm(this.formName);
+    }
+    else if (this.formName === "" && this.mode === "answer"){
+      this.formName = "questionnaire_example";
+      this.loadForm(this.formName);
+    }
+
+    // we get the login status from the service
+    this.authListenerSubs = this.authService
+      .getAuthStatusListener()
+      .subscribe( isAuthenticated => {
+        // with this we update the login status in this header
+        this.userIsAuthenticated = isAuthenticated;
+        this.isLoading = false;
+        // reload form if user is logged in now
+        if (this.userIsAuthenticated){
+          this.loadForm(this.formName);
+          this.loadFormError = false;
+        }
+      });
   }
 
   ngOnChanges(changes: SimpleChanges) {
 
     //console.log("Form data has changed\n");
 
-    // load input file
-    if (this.formName !== "") {
-      this.loadForm(this.formName);
-    }
+
   }
 
   loadForm(formName: string) {
-    if (this.mode == "answer"){
+    if (this.mode === "answer"){
       // todo: change port to env
       this.http
       .get("http://localhost:3002/form/" + formName)
-      .subscribe((value: any) => {
-        this.jsonFormData = value.form;
-        /*
-        console.log("JSON LOADED:\n");
-        console.log(this.jsonFormData);
-        */
-        this.createForm(this.jsonFormData.controls);
+      .subscribe({
+        next: (value: any) => {
+          this.jsonFormData = value.form;
+          /*
+          console.log("JSON LOADED:\n");
+          console.log(this.jsonFormData);
+          */
+          this.createForm(this.jsonFormData.controls);
+        },
+        error: (error: any) => {
+          this.loadFormError = true;
+          console.error(error);
+        }
       });
     }
-    else if (this.mode == "creator") {
+    else if (this.mode === "creator") {
+      // TODO: loading the local file doesn't work in the web component
       this.http
       .get(formName)
       .subscribe({
@@ -68,11 +99,11 @@ export class NeuroneFormsComponent implements OnChanges, OnInit {
           console.log("JSON LOADED:\n");
           console.log(this.jsonFormData);
           */
-          this.localFormError = false;
+          this.loadFormError = false;
           this.createForm(this.jsonFormData.controls);
         },
         error: (error) => {
-          this.localFormError = true;
+          this.loadFormError = true;
           console.error(error);
         }
       });
@@ -80,7 +111,7 @@ export class NeuroneFormsComponent implements OnChanges, OnInit {
   }
 
   createForm(controls: JsonFormControls[]){
-    console.log("Creating form...");
+    console.log("Creating form " + this.jsonFormData.formName + "...");
     for (const control of controls) {
 
       const validatorsToAdd = [];

@@ -88,6 +88,16 @@
       "validators": {
         "required": true
       }
+    },
+    {
+      "title": "How many stars? Part 2",
+      "hint": "Pick anything!",
+      "name": "ratingExample2",
+      "type": "rating",
+      "stars": 10,
+      "validators": {
+        "required": false
+      }
     }
   ]
 }

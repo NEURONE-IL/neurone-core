@@ -75,6 +75,7 @@ export class AppModule {
   constructor (private injector: Injector) {
     const elements: any[] = [
       [NeuroneNavbarComponent, "neurone-navbar"],
+      [NeuroneFormsComponent, "neurone-forms"],
       [InputComponent, "neurone-forms-input"],
       [ParagraphComponent, "neurone-forms-paragraph"],
       [MultipleChoiceComponent, "neurone-forms-multiple-choice"],

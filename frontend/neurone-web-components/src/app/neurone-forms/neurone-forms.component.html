@@ -1,6 +1,3 @@
-<!--star rating style-->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-
 <!--todo: if there isn't any valid make this dissapear with a *ngIf-->
 <form [formGroup]="form" (ngSubmit)="onSubmitAnswers()">
 
@@ -116,11 +113,11 @@
   <div class="submit-button">
     <button mat-raised-button color="primary" type="submit">Submit</button>
     <mat-spinner *ngIf="isLoading"></mat-spinner>
-    <mat-error *ngIf="submitError">Error sumbitting. Please contact the admin of the questionnaire.</mat-error>
+    <mat-error *ngIf="submitError">Error sumbitting. Please contact the administrator of the questionnaire.</mat-error>
+    <mat-error style="padding-top: 1rem;" *ngIf="loadFormError">Failed to find form named "{{ formName }}". Are you authenticated?</mat-error>
   </div>
 
   <div class="submit-button" *ngIf="mode==='creator'">
-    <mat-error *ngIf="localFormError">Local form file "{{ formName }}" not found.</mat-error>
     <button mat-raised-button color="warn" type="button" (click)="onSubmitForm()">Save form in databse</button>
     <mat-spinner *ngIf="isLoading"></mat-spinner>
     <p style="color:blue">{{ saveButtonText }}</p>
