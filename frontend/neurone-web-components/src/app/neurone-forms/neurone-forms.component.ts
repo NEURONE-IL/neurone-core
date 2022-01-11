@@ -221,18 +221,26 @@ export class NeuroneFormsComponent implements OnChanges, OnInit {
     for (let control of this.jsonFormData.controls){
       if (control.type != 'checkbox') {
         const controlName = control.name;
-        const formQuestion = { question: control.name, title: control.title, formType: control.type, answer: this.form.value[controlName]}
+        const formQuestion = {
+          question: control.name,
+          title: control.title,
+          formType: control.type,
+          answer: this.form.value[controlName] ? this.form.value[controlName] : "" }
         formData.questions.push(formQuestion);
       } else {
         // the checkbox is a special case, the different checkbox options are grouped manually since they are separate elements
         if (control.choices){
           const answers: Object[] = [];
-          let formQuestion = { question: control.name, formType: control.type, answer: answers, title: control.title};
+          let formQuestion = {
+            question: control.name,
+            formType: control.type,
+            answerArray: answers,
+            title: control.title};
 
           for (let choice of control.choices){
             const controlNameCheckbox = control.name + ' - ' + choice;
             const formQuestionOption = { question: choice, answer: this.form.value[controlNameCheckbox]}
-            formQuestion.answer.push(formQuestionOption);
+            formQuestion.answerArray.push(formQuestionOption);
           }
           formData.questions.push(formQuestion);
         } else {
@@ -306,7 +314,7 @@ export class NeuroneFormsComponent implements OnChanges, OnInit {
       finalArray.push(i);
     }
 
-    return finalArray
+    return finalArray;
   }
 
 }

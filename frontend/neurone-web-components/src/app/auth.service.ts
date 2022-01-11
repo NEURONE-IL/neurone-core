@@ -31,7 +31,7 @@ export class AuthService {
   }
 
   createUser(email: string, password: string, login?: boolean) {
-    const authData: AuthData = { email: email, password: password }
+    const authData: AuthData = { email: email, password: password, clientDate: Date.now() }
     // TODO: change this port to local env
     this.http.post("http://localhost:3005/auth/signup", authData).subscribe({
       next: response => {
@@ -51,7 +51,7 @@ export class AuthService {
   }
 
   login(email: string, password: string) {
-    const authData: AuthData = { email: email, password: password }
+    const authData: AuthData = { email: email, password: password, clientDate: Date.now() }
     this.http.post<{token: string, expiresIn: number, userId: string}>("http://localhost:3005/auth/login", authData) // TODO: change this to local env
       .subscribe({
         next: response => {
@@ -95,6 +95,21 @@ export class AuthService {
   }
 
   logout() {
+
+    // tell neurone-auth that the user has logged out to save to log data
+    const logoutData/*: LogoutData*/ = { userId: this.getUserId(), clientDate: Date.now() }
+    // TODO: change this port to local env
+    this.http.post("http://localhost:3005/auth/logout", logoutData).subscribe({
+      next: response => {
+        console.log(response);
+        return true;
+      },
+      error: (error) => {
+        console.error(error);
+        return false;
+      }
+    });
+
     this.token = "";
     this.isAuthenticated = false;
     this.authStatusListener.next(false);
@@ -102,6 +117,7 @@ export class AuthService {
     this.clearAuthData();
     // clear timer to aproach manual and automatic (from time out) logout cases
     clearTimeout(this.tokenTimer);
+
   }
 
   setAuthTimer(duration: number) {
