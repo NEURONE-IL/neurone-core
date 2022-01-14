@@ -1,66 +1,69 @@
 import { Directive, Input, HostListener, OnInit } from "@angular/core";
+import { HttpClient } from '@angular/common/http';
 import { AuthService } from "../auth.service";
+import { throttle } from './throttle.decorator';
 
 @Directive({
   selector: '[neurone-logger-mouse]'
 })
 export class MouseDirective implements OnInit {
 
-  screenHeight = window.innerHeight;
-  screenWidth = window.innerHeight;
+  handlerId = "Neurone Mouse Logger";
 
-  @Input('mouse') message : string = "Default message";
-  @HostListener('mouseenter')
-  mouseenter() {
-    console.log("OMG It's a Mouse!!!");
-  }
-
-  constructor(private authService: AuthService) { }
+  constructor(private authService: AuthService, private http: HttpClient) { }
 
   ngOnInit(): void {
   }
 
-  @HostListener('window:resize', ['$event'])
-  onResize() {
-    this.screenHeight = window.innerHeight;
-    this.screenWidth = window.innerHeight;
-    console.log (this.screenHeight, this.screenWidth);
-}
 
-  mouseDataParse(event: MouseEvent) {
+  mouseDataParse(type: string, evt: MouseEvent) {
 
-    let movementOutput = {
-      userId: this.authService.getUserId(),
-      //username:
-      type: 'MouseMovement',
-      url: window.location.pathname,
-      //source: Element id?,
-
-      // mouse position
-      x_win: event.clientX,
-      y_win: event.clientY,
-      w_win: window.innerWidth, //  || event.data.e.clientWidth  || g.clientWidth,
-      h_win: window.innerHeight,
-      /*
-      x_doc: docX,
-      y_doc: docY,
-      w_doc: docW,
-      h_doc: docH,*/
-      localTimestamp: Date.now()
+    if (!this.authService.getAuth()) {
+      return;
     }
 
-    console.log(movementOutput);
+    let data = {
+      logtype : "mouse",
+      userId: this.authService.getUserId(),
+      type  : type,
+      source: this.handlerId || "Window",
+      url   : window.document.URL,
+      clientTimestamp: Date.now(),
+      x_win : evt.clientX,
+      y_win : evt.clientY,
+      w_win : window.innerWidth,
+      h_win : window.innerHeight,
+      x_doc : evt.pageX,
+      y_doc : evt.pageY,
+      w_doc : document.documentElement.scrollWidth,
+      h_doc : document.documentElement.scrollHeight
+    };
+
+    console.log(data);
+
+    this.http.post("http://localhost:3002/logger", data).subscribe({
+      next: (message => {console.log(message)}),
+      error: (err => {console.error(err)})
+    });
+
+    return;
 
   }
 
+  @throttle(2000)
   @HostListener('mousemove', ['$event'])
   mouseover(event: MouseEvent) {
-    const data = this.mouseDataParse(event);
+    this.mouseDataParse("MouseMove", event);
   }
 
   @HostListener('click', ['$event'])
   click(event: MouseEvent){
-    const data = this.mouseDataParse(event);
+    this.mouseDataParse("MouseClick", event);
+  }
+
+  @HostListener('mouseenter', ['$event'])
+  mouseenter(event: MouseEvent) {
+    this.mouseDataParse("MouseEnter", event);
   }
 
 }
