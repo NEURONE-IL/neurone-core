@@ -21,12 +21,22 @@
       <mat-form-field>
         <input
           matInput
+          name="username"
+          ngModel
+          type="username"
+          placeholder="Username"
+          #usernameInput="ngModel"
+          required>
+        <mat-error *ngIf="usernameInput.invalid">Please enter a valid username.</mat-error>
+      </mat-form-field>
+      <mat-form-field *ngIf="cardMode==='signup'">
+        <input
+          matInput
           name="email"
           ngModel
           type="email"
-          placeholder="E-Mail"
+          placeholder="E-Mail (optional)"
           #emailInput="ngModel"
-          required
           email>
         <mat-error *ngIf="emailInput.invalid">Please enter a valid email.</mat-error>
       </mat-form-field>

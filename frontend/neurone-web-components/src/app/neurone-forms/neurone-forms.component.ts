@@ -272,6 +272,7 @@ export class NeuroneFormsComponent implements OnChanges, OnInit {
     // send the current questionnaire to the backend
     const formDataQuestionnaire = {
       formName: this.jsonFormData.formName,
+      username: this.authService.getUsername(),
       questions: this.jsonFormData.controls
     }
 

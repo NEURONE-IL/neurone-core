@@ -1,4 +1,3 @@
-import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Subscription } from 'rxjs';
@@ -13,8 +12,8 @@ export class NeuroneNavbarComponent implements OnInit {
 
   userIsAuthenticated = false;
   cardMode: "hidden" | "signin" | "signup" = "hidden";
-  authError = false;
-  isLoading = false; // to show the error message when connecting to the backend
+  authError = false; // to show the error message when connecting to the backend
+  isLoading = false;
   loggedOut = false;
   private authListenerSubs: Subscription | undefined;
 
@@ -44,10 +43,10 @@ export class NeuroneNavbarComponent implements OnInit {
 
     if (this.cardMode === "signin"){
       this.isLoading = true;
-      this.authService.login(form.value.email, form.value.password);
+      this.authService.login(form.value.username, form.value.email, form.value.password);
     } else if (this.cardMode === "signup"){
       this.isLoading = true;
-      this.authService.createUser(form.value.email, form.value.password, true);
+      this.authService.createUser(form.value.username, form.value.email, form.value.password, true);
     }
   }
 

@@ -10,6 +10,8 @@ export class AuthService {
   private token: string = "";
   private authStatusListener = new Subject<boolean>();
   private userId: string = "";
+  private username: string = "";
+  private email: string = "";
   private tokenTimer: any;
 
   constructor(private http: HttpClient) {}
@@ -30,15 +32,23 @@ export class AuthService {
     return this.userId;
   }
 
-  createUser(email: string, password: string, login?: boolean) {
-    const authData: AuthData = { email: email, password: password, clientDate: Date.now() }
+  getUsername() {
+    return this.username;
+  }
+
+  getEmail() {
+    return this.email;
+  }
+
+  createUser(username: string, email: string, password: string, login?: boolean) {
+    const authData: AuthData = { username: username, email: email, password: password, clientDate: Date.now() }
     // TODO: change this port to local env
     this.http.post("http://localhost:3005/auth/signup", authData).subscribe({
       next: response => {
         console.log(response);
         // auto login
         if (login){
-          this.login(email, password);
+          this.login(username, email, password);
         }
         return true;
       },
@@ -50,9 +60,9 @@ export class AuthService {
     });
   }
 
-  login(email: string, password: string) {
-    const authData: AuthData = { email: email, password: password, clientDate: Date.now() }
-    this.http.post<{token: string, expiresIn: number, userId: string}>("http://localhost:3005/auth/login", authData) // TODO: change this to local env
+  login(username: string, email: string, password: string) {
+    const authData: AuthData = { username: username, email: email, password: password, clientDate: Date.now() }
+    this.http.post<{token: string, expiresIn: number, userId: string, username: string, email: string}>("http://localhost:3005/auth/login", authData) // TODO: change this to local env
       .subscribe({
         next: response => {
           const token = response.token;
@@ -64,10 +74,12 @@ export class AuthService {
 
             this.isAuthenticated = true;
             this.userId = response.userId;
+            this.username = response.username;
+            this.email = response.email;
             this.authStatusListener.next(true);
             const now = new Date();
             const expirationDate = new Date(now.getTime() + expiresInDuration * 1000);
-            this.saveAuthData(token, expirationDate, this.userId);
+            this.saveAuthData(token, expirationDate, this.userId, this.username, this.email);
           }
         },
         error: error => {
@@ -88,6 +100,8 @@ export class AuthService {
     console.log(authInformation, expiresIn);
     if (expiresIn > 0) {
       this.token = authInformation.token;
+      this.username = authInformation.username;
+      this.email = authInformation.email;
       this.isAuthenticated = true;
       this.setAuthTimer(expiresIn / 1000);
       this.authStatusListener.next(true);
@@ -128,29 +142,37 @@ export class AuthService {
     }, duration * 1000 )
   }
 
-  private saveAuthData(token: string, expirationDate: Date, userId: string) {
+  private saveAuthData(token: string, expirationDate: Date, userId: string, username: string, email: string) {
     localStorage.setItem('token', token);
     localStorage.setItem('expiration', expirationDate.toISOString());
     localStorage.setItem('userId', userId);
+    localStorage.setItem('username', username);
+    localStorage.setItem('email', email);
   }
 
   private clearAuthData() {
     localStorage.removeItem('token');
     localStorage.removeItem('expiration');
     localStorage.removeItem('userId');
+    localStorage.removeItem('username');
+    localStorage.removeItem('email');
   }
 
   private getAuthData() {
     const token = localStorage.getItem('token');
     const expirationDate = localStorage.getItem('expiration');
     const userId = localStorage.getItem('userId');
-    if (!token || !expirationDate || !userId) {
+    const username = localStorage.getItem('username');
+    const email = localStorage.getItem('email');
+    if (!token || !expirationDate || !userId || !username || !email) {
       return;
     }
     return{
       token: token,
       expirationDate: new Date(expirationDate),
-      userId: userId
+      userId: userId,
+      username: username,
+      email: email
     }
 
   }
