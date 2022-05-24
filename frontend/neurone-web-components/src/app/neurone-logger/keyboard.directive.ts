@@ -24,7 +24,6 @@ export class KeyboardDirective {
     }
 
     let data = {
-      logtype   : "keyboard",
       userId    : this.authService.getUserId(),
       type      : type,
       source    : this.handlerId,
@@ -35,20 +34,20 @@ export class KeyboardDirective {
       keyCode   : evt.keyCode,
       charCode  : evt.charCode,
       key       : evt.key,
-      //char      : evt.char
+      char      : null //
     };
 
     console.log(data);
 
-    this.http.post("http://localhost:3002/logger", data).subscribe({
-      next: (message => {console.log(message)}),
+    this.http.post("http://localhost:3002/logger/keyboard", data).subscribe({
+      next: (_ => {}),
       error: (err => {console.error(err)})
     });
 
   }
 
   @HostListener('keydown', ['$event'])
-  keyDown(event: any) {
+  keyDown(event: KeyboardEvent) {
     this.keyDataParse("Key Down", event);
   }
 

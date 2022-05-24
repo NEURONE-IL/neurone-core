@@ -2,6 +2,7 @@ import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Subject } from "rxjs";
 import { AuthData } from "./auth-data.model";
+import { environment } from "src/environments/environment";
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -42,8 +43,7 @@ export class AuthService {
 
   createUser(username: string, email: string, password: string, login?: boolean) {
     const authData: AuthData = { username: username, email: email, password: password, clientDate: Date.now() }
-    // TODO: change this port to local env
-    this.http.post("http://localhost:3005/auth/signup", authData).subscribe({
+    this.http.post("http://localhost:" + environment.neuroneAuthPort + "/auth/signup", authData).subscribe({
       next: response => {
         console.log(response);
         // auto login
@@ -62,7 +62,7 @@ export class AuthService {
 
   login(username: string, email: string, password: string) {
     const authData: AuthData = { username: username, email: email, password: password, clientDate: Date.now() }
-    this.http.post<{token: string, expiresIn: number, userId: string, username: string, email: string}>("http://localhost:3005/auth/login", authData) // TODO: change this to local env
+    this.http.post<{token: string, expiresIn: number, userId: string, username: string, email: string}>("http://localhost:" + environment.neuroneAuthPort + "/auth/login", authData)
       .subscribe({
         next: response => {
           const token = response.token;
@@ -112,8 +112,7 @@ export class AuthService {
 
     // tell neurone-auth that the user has logged out to save to log data
     const logoutData/*: LogoutData*/ = { userId: this.getUserId(), clientDate: Date.now() }
-    // TODO: change this port to local env
-    this.http.post("http://localhost:3005/auth/logout", logoutData).subscribe({
+    this.http.post("http://localhost:" + environment.neuroneAuthPort + "/auth/logout", logoutData).subscribe({
       next: response => {
         console.log(response);
         return true;

@@ -23,12 +23,11 @@ export class MouseDirective implements OnInit {
     }
 
     let data = {
-      logtype : "mouse",
       userId: this.authService.getUserId(),
       type  : type,
       source: this.handlerId || "Window",
       url   : window.document.URL,
-      clientTimestamp: Date.now(),
+      dateClient: Date.now(),
       x_win : evt.clientX,
       y_win : evt.clientY,
       w_win : window.innerWidth,
@@ -41,8 +40,8 @@ export class MouseDirective implements OnInit {
 
     console.log(data);
 
-    this.http.post("http://localhost:3002/logger", data).subscribe({
-      next: (message => {console.log(message)}),
+    this.http.post("http://localhost:3002/logger/mouse", data).subscribe({
+      next: (_ => {}),
       error: (err => {console.error(err)})
     });
 

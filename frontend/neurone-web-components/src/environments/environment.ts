@@ -3,7 +3,10 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false
+  production: false,
+  neuroneSearchPort: 3001,
+  neuroneProfilePort: 3002,
+  neuroneAuthPort: 3005
 };
 
 /*

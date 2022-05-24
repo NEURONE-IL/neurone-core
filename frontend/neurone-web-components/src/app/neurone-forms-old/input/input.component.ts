@@ -28,7 +28,7 @@ export class InputComponent implements OnInit {
       this.formService.uploadForm(userId, this.title, this.formType, this.userInput, undefined);
     } else {
       console.log("User is not authenticated");
-      return
+      return;
     }
   }
 

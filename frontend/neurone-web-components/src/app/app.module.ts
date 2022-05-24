@@ -32,6 +32,7 @@ import { SubmitComponent } from './neurone-forms-old/submit/submit.component';
 import { NeuroneFormsComponent } from './neurone-forms/neurone-forms.component';
 import { MouseDirective } from './neurone-logger/mouse.directive';
 import { KeyboardDirective } from './neurone-logger/keyboard.directive';
+import { ScrollDirective } from './neurone-logger/scroll.directive';
 
 @NgModule({
   declarations: [
@@ -46,7 +47,8 @@ import { KeyboardDirective } from './neurone-logger/keyboard.directive';
     SubmitComponent,
     NeuroneFormsComponent,
     MouseDirective,
-    KeyboardDirective
+    KeyboardDirective,
+    ScrollDirective
   ],
   imports: [
     BrowserModule,

@@ -4,6 +4,7 @@ import { JsonFormData, JsonFormControls } from './neurone-form.model';
 import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 import { AuthService } from '../auth.service';
 import { Subscription } from 'rxjs';
+import { environment } from 'src/environments/environment';
 
 
 @Component({
@@ -70,9 +71,8 @@ export class NeuroneFormsComponent implements OnChanges, OnInit {
 
   loadForm(formName: string) {
     if (this.mode === "answer"){
-      // todo: change port to env
       this.http
-      .get("http://localhost:3002/form/" + formName)
+      .get("http://localhost:" + environment.neuroneProfilePort + "/form/" + formName)
       .subscribe({
         next: (value: any) => {
           this.jsonFormData = value.form;
@@ -251,8 +251,7 @@ export class NeuroneFormsComponent implements OnChanges, OnInit {
 
     console.log(formData);
 
-    // todo: change to env port
-    this.http.post("http://localhost:3002/profile/form", formData)
+    this.http.post("http://localhost:" + environment.neuroneProfilePort + "/profile/form", formData)
       .subscribe({
         next: response => {
           this.isLoading = false;
@@ -276,15 +275,14 @@ export class NeuroneFormsComponent implements OnChanges, OnInit {
       questions: this.jsonFormData.controls
     }
 
-    // todo: change to env port
-    this.http.put("http://localhost:3002/form/" + formDataQuestionnaire.formName, formDataQuestionnaire)
+    this.http.put("http://localhost:" + environment.neuroneProfilePort + "/form/" + formDataQuestionnaire.formName, formDataQuestionnaire)
       .subscribe({
         next: response => {
           this.saveButtonText = "Saved!";
           console.log(response);
         },
         error: error => {
-          this.saveButtonText = "Error saving";
+          this.saveButtonText = "Error saving. Are you authenticated?";
           console.error(error);
         }
       });
@@ -293,15 +291,14 @@ export class NeuroneFormsComponent implements OnChanges, OnInit {
   }
 
   onDeleteForm() {
-    // todo: change to env port
-    this.http.delete("http://localhost:3002/form/" + this.jsonFormData.formName)
+    this.http.delete("http://localhost:" + environment.neuroneProfilePort + "/form/" + this.jsonFormData.formName)
       .subscribe({
         next: response => {
           this.deleteButtonText = "Deleted!";
           console.log(response);
         },
         error: error => {
-          this.deleteButtonText = "Could not delete form.";
+          this.deleteButtonText = "Could not delete form. Are you authenticated?";
           console.error(error);
         }
       });
