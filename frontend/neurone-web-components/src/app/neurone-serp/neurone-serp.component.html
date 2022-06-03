@@ -1,0 +1,23 @@
+<div *ngIf="mode==='serp'">
+  <div class="search-bar">
+    <p>This is like google, neat!!!</p>
+    <input [formControl]="searchForm">
+    <button mat-rised-button color="primary" type="submit" (click)="makeSearchQuery()">Search</button>
+  </div>
+  <div>
+    <div *ngFor="let doc of documents">
+      <div class="document">
+        <div class="document-header">
+          <p>{{doc.url_t}}</p>
+          <a href=# (click)="switchToPageMode(routes[doc.id])">{{doc.title_t}}</a>
+        </div>
+          <p [innerHTML]="highlights[doc.id]"></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="mode==='page'">
+  <iframe title="Neurone SERP Page (TODO: CHANGE TITLE)" [src]='selectedPage | safe' height="1000" width="100%"></iframe>
+</div>
+

@@ -1,0 +1,17 @@
+em {
+  font-weight: bold;
+  font-style: normal;
+}
+
+.document {
+  width: 600px;
+  margin-top: 0;
+  margin-bottom: 30px;
+  position: relative;
+}
+
+.document-header {
+  font-weight: normal;
+  font-size: small;
+  line-height: 1.58;
+}

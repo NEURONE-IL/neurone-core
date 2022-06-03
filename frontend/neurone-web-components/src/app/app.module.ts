@@ -4,7 +4,7 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { createCustomElement } from '@angular/elements';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http'
 
-import { AppComponent } from './app.component';
+import { AppComponent, SafePipe } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { MatCardModule } from '@angular/material/card';
@@ -33,6 +33,7 @@ import { NeuroneFormsComponent } from './neurone-forms/neurone-forms.component';
 import { MouseDirective } from './neurone-logger/mouse.directive';
 import { KeyboardDirective } from './neurone-logger/keyboard.directive';
 import { ScrollDirective } from './neurone-logger/scroll.directive';
+import { NeuroneSerpComponent } from './neurone-serp/neurone-serp.component';
 
 @NgModule({
   declarations: [
@@ -48,7 +49,9 @@ import { ScrollDirective } from './neurone-logger/scroll.directive';
     NeuroneFormsComponent,
     MouseDirective,
     KeyboardDirective,
-    ScrollDirective
+    ScrollDirective,
+    NeuroneSerpComponent,
+    SafePipe
   ],
   imports: [
     BrowserModule,
