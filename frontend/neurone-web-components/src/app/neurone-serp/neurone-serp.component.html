@@ -1,23 +1,28 @@
-<div *ngIf="mode==='serp'">
-  <div class="search-bar">
-    <p>This is like google, neat!!!</p>
-    <input [formControl]="searchForm">
-    <button mat-rised-button color="primary" type="submit" (click)="makeSearchQuery()">Search</button>
+<div *ngIf="!searchOnline && !loading" class="error-mess">
+  <p>Search not Connected, please make sure neurone-search is online and refresh.</p>
+</div>
+<div *ngIf="mode==='serp'" class="serp-container">
+  <div class="search-small">
+    <img src="../../assets/searchlogo.png" alt="neurone logo">
+    <div class="search-small-input">
+      <input [formControl]="searchForm">
+      <button mat-raised-button color="primary" type="submit" (click)="makeSearchQuery()">Search</button>
+    </div>
   </div>
+  <hr color="#dddddd">
   <div>
     <div *ngFor="let doc of documents">
       <div class="document">
-        <div class="document-header">
-          <p>{{doc.url_t}}</p>
-          <a href=# (click)="switchToPageMode(routes[doc.id])">{{doc.title_t}}</a>
-        </div>
-          <p [innerHTML]="highlights[doc.id]"></p>
+        <p class="document-header">{{doc.url_t}}</p>
+        <a href=# (click)="switchToPageMode(routes[doc.id])" class="document-title">{{doc.title_t}}</a>
+        <p [innerHTML]="buildSnippet(highlights[doc.id])" class="document-desc"></p>
       </div>
     </div>
   </div>
 </div>
 
 <div *ngIf="mode==='page'">
-  <iframe title="Neurone SERP Page (TODO: CHANGE TITLE)" [src]='selectedPage | safe' height="1000" width="100%"></iframe>
+  <button mat-raised-button (click)="switchToSerpMode()">GO BACK!!!!!!!</button>
+  <iframe title="Neurone SERP Page (TODO: CHANGE TITLE)" sandbox [src]='selectedPage | safe' height="100vh" width="100%"></iframe>
 </div>
 

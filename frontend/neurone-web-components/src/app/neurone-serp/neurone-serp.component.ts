@@ -26,7 +26,7 @@ export class NeuroneSerpComponent implements OnInit {
   searchForm = new FormControl('');
   documents: searchDocument[] = [];  // documents found by neurone-seach
   highlights: any;  // highlights for the documents, also provided by neurone search. it's an object with keys representing the doc ID
-  routes: any; // routes of the downloaded documents
+  routes: any; // routes of the downloaded documents, similar format to  highlights
   safeUrl = "url";
 
 
@@ -71,13 +71,29 @@ export class NeuroneSerpComponent implements OnInit {
 
   }
 
-
+  switchToSerpMode(){
+    this.mode = 'serp';
+    this.selectedPage = '';
+    return
+  }
 
   switchToPageMode(url: string) {
     console.log("SWITCHING TO Page MODE: new url: ", url);
     this.mode = 'page';
     this.selectedPage = url;
     return;
+  }
+
+  buildSnippet(texts: string[]) {
+    if (!texts) {
+      return "";
+    }
+
+    let finalString = "...";
+    for (const text of texts) {
+      finalString += text + "... "
+    }
+    return finalString;
   }
 
   /**
@@ -95,10 +111,12 @@ export class NeuroneSerpComponent implements OnInit {
         // save documents if there is any
         this.documents = res.result.response.docs ? res.result.response.docs : [];
 
-        // if there is no highlight provided by solr, use manually saved snippet
+        // if there is no highlight provided by the search index, use manually saved snippet
+        console.log("HIGHLIGHTS RECEIVED:");
+        console.log(res.result.highlighting);
         this.highlights = {}
         for (const doc of this.documents) {
-          this.highlights[doc.id] = res.result.highlighting[doc.id].length > 0 ? res.result.highlighting[doc.id] : doc.searchSnippet_t;
+          this.highlights[doc.id] = res.result.highlighting[doc.id]?.length > 0 ? res.result.highlighting[doc.id] : doc.searchSnippet_t;
         }
 
         // save route for the downloaded document and add the localhost section
