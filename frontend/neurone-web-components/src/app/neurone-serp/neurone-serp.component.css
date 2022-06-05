@@ -8,7 +8,7 @@ iframe {
   background: #000;
   border: none;         /* Reset default border */
   height: 100vh;        /* Viewport-relative units */
-  width: 99vw;
+  width: 100vw - 20px;
 }
 
 img {
@@ -20,7 +20,14 @@ img {
 input {
   line-height: 30px;
   width: 35%;
+  border: 2px solid #aaaaaa;
+  border-radius: 10px;
+  padding-left: 10px;
+  font-size: 15px
+}
 
+button {
+  border-radius: 10px;
 }
 
 hr {
@@ -40,7 +47,7 @@ hr {
 
 .search-small {
   margin-top: 20px;
-  margin-bottom: 50px;
+  margin-bottom: 40px;
   min-width: 1121px;
   height: 80px;
   z-index: 128;
@@ -48,10 +55,28 @@ hr {
 }
 
 .search-small-input {
-  margin-top:auto;
+  margin-top: auto;
   margin-bottom: auto;
   margin-left: 3rem;
+  width: 70%;
+
+}
+
+.search-logo-pointer {
+  cursor: pointer;
+}
+
+.search-big {
+  padding-top: 4rem;
+  padding-bottom: 10rem;
   width: 50%;
+  height: auto;
+  margin: 0 auto;
+}
+
+.search-big-input {
+  width: 80rem;
+  margin-top: 2rem;
 }
 
 .document {

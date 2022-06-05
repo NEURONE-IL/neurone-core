@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
+import { PageEvent } from '@angular/material/paginator';
 import { environment } from 'src/environments/environment';
 
 interface searchDocument {
@@ -20,14 +21,23 @@ interface searchDocument {
 export class NeuroneSerpComponent implements OnInit {
 
   mode: 'serp' | 'page' = 'serp';
+  noQueriesMade = true;
   selectedPage: string = ''; // current page for the page mode
   loading = true;
   searchOnline = false;
+  lastQuery = '';
+
+  // pagination
+  currentPage = 0;
+  docsInPage = 10;
+  totalDocsFound = 0;
+  pageSizeOptions = [1, 2, 5, 10, 50];
+
   searchForm = new FormControl('');
+
   documents: searchDocument[] = [];  // documents found by neurone-seach
   highlights: any;  // highlights for the documents, also provided by neurone search. it's an object with keys representing the doc ID
   routes: any; // routes of the downloaded documents, similar format to  highlights
-  safeUrl = "url";
 
 
   constructor(private http: HttpClient) { }
@@ -50,23 +60,23 @@ export class NeuroneSerpComponent implements OnInit {
           console.error(e);
          this.loading = false;
         }
-      })
+      });
     }
     else {
-    this.http.
-      get("http://localhost:" + environment.neuroneSearchPort + "/refresh")
-      .subscribe({
-        next: () => {
-          console.log("Connection with Neurone-Search back-end successful");
-          this.searchOnline = true;
-          this.loading = false;
-        },
-        error: (e) => {
-          console.error("Error connecting with Neurone-Search back-end.");
-          console.error(e);
-          this.loading = false;
-        }
-      })
+      this.http.
+        get("http://localhost:" + environment.neuroneSearchPort + "/refresh")
+        .subscribe({
+          next: () => {
+            console.log("Connection with Neurone-Search back-end successful, index refreshed (development mode).");
+            this.searchOnline = true;
+            this.loading = false;
+          },
+          error: (e) => {
+            console.error("Error connecting with Neurone-Search back-end.");
+            console.error(e);
+            this.loading = false;
+          }
+        });
     };
 
   }
@@ -84,6 +94,11 @@ export class NeuroneSerpComponent implements OnInit {
     return;
   }
 
+  /**
+   * builds a string to show below the page links in the SERP
+   * @param texts each snippet saved (from index or database as a backup)
+   * @returns string with the content to show in the SERP
+   */
   buildSnippet(texts: string[]) {
     if (!texts) {
       return "";
@@ -96,24 +111,46 @@ export class NeuroneSerpComponent implements OnInit {
     return finalString;
   }
 
+  onChangedPage(pageData: PageEvent) {
+    this.currentPage = pageData.pageIndex
+    this.docsInPage = pageData.pageSize
+    this.makeSearchQuery(this.lastQuery);
+  }
+
+  onSeachRequest() {
+    this.lastQuery = this.searchForm.value;
+    this.makeSearchQuery(this.searchForm.value);
+  }
+
   /**
-   * makes a search query to NEURONE Search
+   * makes a search query to NEURONE Search using the search form
    */
-  makeSearchQuery() {
-    console.log(this.searchForm.value);
+  makeSearchQuery(query: string) {
+    this.noQueriesMade = false;
+    console.log("New Query:" + query);
+
+    // don't do the query if the input is empty
+    if (this.searchForm.value === '') {
+      return;
+    }
+
+    this.loading = true;
+
     this.http.
-    get("http://localhost:" + environment.neuroneSearchPort + "/search/" + this.searchForm.value)
+    get("http://localhost:" + environment.neuroneSearchPort + "/search/" + query+ "/" + this.currentPage + "/" + this.docsInPage)
     .subscribe({
       next: (res: any) => {
 
+        this.loading = false;
         console.log(res);
+
+        // save total number of docs found
+        this.totalDocsFound = res.result.response.numFound;
 
         // save documents if there is any
         this.documents = res.result.response.docs ? res.result.response.docs : [];
 
         // if there is no highlight provided by the search index, use manually saved snippet
-        console.log("HIGHLIGHTS RECEIVED:");
-        console.log(res.result.highlighting);
         this.highlights = {}
         for (const doc of this.documents) {
           this.highlights[doc.id] = res.result.highlighting[doc.id]?.length > 0 ? res.result.highlighting[doc.id] : doc.searchSnippet_t;
@@ -130,6 +167,7 @@ export class NeuroneSerpComponent implements OnInit {
         console.log("Routes is now: ", this.routes);
       },
       error: (e: any) => {
+        this.loading = false;
         console.error(e);
       }
     })

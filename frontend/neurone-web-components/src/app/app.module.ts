@@ -17,6 +17,8 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSelectModule } from '@angular/material/select';
 import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatPaginatorModule } from '@angular/material/paginator';
+
 
 import { NeuroneNavbarComponent } from './neurone-navbar/neurone-navbar.component';
 import { AuthInterceptor } from './auth-interceptor';
@@ -69,6 +71,7 @@ import { NeuroneSerpComponent } from './neurone-serp/neurone-serp.component';
     MatDatepickerModule,
     MatNativeDateModule,
     MatIconModule,
+    MatPaginatorModule,
     HttpClientModule
   ],
   providers: [

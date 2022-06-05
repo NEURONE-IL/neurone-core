@@ -1,16 +1,26 @@
 <div *ngIf="!searchOnline && !loading" class="error-mess">
-  <p>Search not Connected, please make sure neurone-search is online and refresh.</p>
+  <p>Search not connected, please make sure neurone-search is online and refresh.</p>
 </div>
+
 <div *ngIf="mode==='serp'" class="serp-container">
-  <div class="search-small">
-    <img src="../../assets/searchlogo.png" alt="neurone logo">
+  <div *ngIf="!noQueriesMade" class="search-small">
+    <img src="../../assets/searchlogo.png" alt="neurone logo" (click)="noQueriesMade=true" class="search-logo-pointer">
     <div class="search-small-input">
-      <input [formControl]="searchForm">
-      <button mat-raised-button color="primary" type="submit" (click)="makeSearchQuery()">Search</button>
+      <input [formControl]="searchForm" (keydown.enter)="onSeachRequest()">
+      <button mat-raised-button color="primary" type="submit" (click)="onSeachRequest()">Search</button>
+    </div>
+  </div>
+  <div *ngIf="noQueriesMade" class="search-big">
+    <mat-spinner *ngIf="loading"></mat-spinner>
+    <img src="../../assets/searchlogo.png" alt="neurone logo">
+    <div class="search-big-input">
+      <input [formControl]="searchForm" (keydown.enter)="onSeachRequest()">
+      <button mat-raised-button color="primary" type="submit" (click)="onSeachRequest()">Search</button>
     </div>
   </div>
   <hr color="#dddddd">
-  <div>
+  <div *ngIf="!noQueriesMade">
+    <mat-spinner *ngIf="loading"></mat-spinner>
     <div *ngFor="let doc of documents">
       <div class="document">
         <p class="document-header">{{doc.url_t}}</p>
@@ -18,11 +28,21 @@
         <p [innerHTML]="buildSnippet(highlights[doc.id])" class="document-desc"></p>
       </div>
     </div>
+    <div *ngIf="documents.length===0">
+      <p>Your search - <b>{{lastQuery}}</b> - did not match any documents.</p>
+    </div>
+    <mat-paginator
+      aria-label="Select page"
+      [pageSize]="docsInPage"
+      [length]="totalDocsFound"
+      [pageSizeOptions]="pageSizeOptions"
+      (page)="onChangedPage($event)">
+    </mat-paginator>
   </div>
 </div>
 
 <div *ngIf="mode==='page'">
-  <button mat-raised-button (click)="switchToSerpMode()">GO BACK!!!!!!!</button>
-  <iframe title="Neurone SERP Page (TODO: CHANGE TITLE)" sandbox [src]='selectedPage | safe' height="100vh" width="100%"></iframe>
+  <button mat-raised-button  (click)="switchToSerpMode()">Return to Search Results</button>
+  <iframe title="Selected page of Neurone SERP" sandbox [src]='selectedPage | safe' height="100vh" width="100%"></iframe>
 </div>
 
