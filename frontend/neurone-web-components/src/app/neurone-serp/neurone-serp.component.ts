@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { PageEvent } from '@angular/material/paginator';
 import { environment } from 'src/environments/environment';
@@ -16,7 +16,8 @@ interface searchDocument {
 @Component({
   selector: 'app-neurone-serp',
   templateUrl: './neurone-serp.component.html',
-  styleUrls: ['./neurone-serp.component.css']
+  styleUrls: ['./neurone-serp.component.css', 'wikipedia.css'], // TODO: keep testing wiki style or remove
+  encapsulation: ViewEncapsulation.None
 })
 export class NeuroneSerpComponent implements OnInit {
 
@@ -81,6 +82,10 @@ export class NeuroneSerpComponent implements OnInit {
 
   }
 
+  test(){
+    console.log("XD")
+  }
+
   switchToSerpMode(){
     this.mode = 'serp';
     this.selectedPage = '';
@@ -118,7 +123,10 @@ export class NeuroneSerpComponent implements OnInit {
   }
 
   onSeachRequest() {
-    this.lastQuery = this.searchForm.value;
+    if (this.searchForm.value !== '') {
+      this.lastQuery = this.searchForm.value;
+    }
+    this.currentPage = 0;
     this.makeSearchQuery(this.searchForm.value);
   }
 
@@ -126,14 +134,14 @@ export class NeuroneSerpComponent implements OnInit {
    * makes a search query to NEURONE Search using the search form
    */
   makeSearchQuery(query: string) {
-    this.noQueriesMade = false;
-    console.log("New Query:" + query);
 
     // don't do the query if the input is empty
     if (this.searchForm.value === '') {
       return;
     }
 
+    this.noQueriesMade = false;
+    console.log("New Query:" + query);
     this.loading = true;
 
     this.http.

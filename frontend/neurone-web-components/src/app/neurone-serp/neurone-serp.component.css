@@ -1,20 +1,25 @@
-em {
+/* for the highlight snippet received from the backend indexer */
+em.hl {
   font-weight: bold;
   font-style: normal;
 }
 
-iframe {
+.neurone-iframe {
   display: block;       /* iframes are inline by default */
-  background: #000;
   border: none;         /* Reset default border */
-  height: 100vh;        /* Viewport-relative units */
-  width: 100vw - 20px;
+  height: 96vh;        /* Viewport-relative units */
+  width: 100%;
+  overflow-x: hidden;
+  /*pointer-events: none;*/
 }
 
 img {
   height: 100%;
   width: auto;
-  object-fit: contain;
+  max-width: 100%;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 input {
@@ -26,12 +31,9 @@ input {
   font-size: 15px
 }
 
-button {
-  border-radius: 10px;
-}
-
 hr {
-  margin-left: -5rem;
+  margin-left: -100rem;
+  margin-right: -5rem;
   margin-bottom: 40px;
 }
 
@@ -42,7 +44,9 @@ hr {
 }
 
 .serp-container {
-  margin-left:5rem;
+  margin-left: 12rem;
+  margin-right: 5rem;
+  padding-bottom: 6rem;
 }
 
 .search-small {
@@ -57,9 +61,8 @@ hr {
 .search-small-input {
   margin-top: auto;
   margin-bottom: auto;
-  margin-left: 3rem;
+  margin-left: 1rem;
   width: 70%;
-
 }
 
 .search-logo-pointer {
@@ -75,14 +78,15 @@ hr {
 }
 
 .search-big-input {
-  width: 80rem;
+  display: block;
+  width: 250%;
   margin-top: 2rem;
 }
 
 .document {
-  width: 600px;
-  margin-top: 0;
-  margin-bottom: 30px;
+  width: 700px;
+  margin-top: 40px;
+  margin-bottom: 40px;
   position: relative;
 }
 
@@ -96,7 +100,8 @@ hr {
 .document-title{
   display: inline-block;
   line-height: 1.3;
-  margin-bottom: 3px;
+  margin-bottom: 0px;
+  padding-bottom: 0px;
   font-weight: normal;
   font-family: arial,sans-serif;
   font-size: 20px;
@@ -107,6 +112,6 @@ hr {
   display: -webkit-box;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  padding-top: 0px;
+  margin-top: 7px;
   margin-bottom: 0px;
 }
