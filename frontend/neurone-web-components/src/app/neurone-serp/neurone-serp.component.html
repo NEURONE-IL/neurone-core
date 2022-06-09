@@ -3,14 +3,14 @@
 </div>
 
 <div *ngIf="mode==='serp'" class="serp-container">
-  <div *ngIf="!noQueriesMade" class="search-small">
-    <img src="../../assets/searchlogo.png" alt="neurone logo" (click)="noQueriesMade=true" class="search-logo-pointer">
+  <div *ngIf="!fullScreenMode" class="search-small">
+    <img src="../../assets/searchlogo.png" alt="neurone logo" (click)="fullScreenMode=true" class="search-logo-pointer">
     <div class="search-small-input">
       <input [formControl]="searchForm" (keydown.enter)="onSeachRequest()">
       <button mat-raised-button color="primary" style="border-radius: 10px" type="button" (click)="onSeachRequest()">Search</button>
     </div>
   </div>
-  <div *ngIf="noQueriesMade" class="search-big">
+  <div *ngIf="fullScreenMode" class="search-big">
     <img src="../../assets/searchlogo.png" alt="neurone logo">
     <div class="search-big-input">
       <input [formControl]="searchForm" (keydown.enter)="onSeachRequest()">
@@ -19,12 +19,12 @@
      <mat-spinner *ngIf="loading"></mat-spinner>
   </div>
   <hr color="#dddddd">
-  <div *ngIf="!noQueriesMade">
+  <div *ngIf="!fullScreenMode">
     <mat-spinner *ngIf="loading"></mat-spinner>
     <div *ngFor="let doc of documents">
       <div class="document">
         <p class="document-header">{{doc.url_t}}</p>
-        <a href=# (click)="switchToPageMode(routes[doc.id])" class="document-title">{{doc.title_t}}</a>
+        <a href=# (click)="switchToPageMode(doc)" class="document-title">{{doc.title_t}}</a>
         <p [innerHTML]="buildSnippet(highlights[doc.id])" class="document-desc"></p>
       </div>
     </div>
@@ -45,5 +45,5 @@
 
 <div *ngIf="mode==='page'">
   <button mat-raised-button  (click)="switchToSerpMode()">Return to Search Results</button>
-  <iframe title="Selected page of Neurone SERP" sandbox="allow-top-navigation" [src]='selectedPage | safe' class="neurone-iframe" styleRef="./wikipedia.css"></iframe>
+  <iframe title="Selected page of Neurone SERP" styleRef="./wikipedia.css" sandbox="allow-top-navigation" [src]='selectedPageRoute | safe' class="neurone-iframe" styleRef="./wikipedia.css"></iframe>
 </div>

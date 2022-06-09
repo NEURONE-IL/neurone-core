@@ -21,6 +21,10 @@ export class AuthService {
     return this.token;
   }
 
+  /**
+   * check if the user is logged in
+   * @returns boolean with login status
+   */
   getAuth() {
     return this.isAuthenticated;
   }
