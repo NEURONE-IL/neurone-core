@@ -41,6 +41,7 @@ export class NeuroneSerpComponent implements OnInit {
 
   mode: 'serp' | 'page' = 'serp';
   fullScreenMode = true;
+  showUserSaveButtons = false;
   selectedPageName = ''; // name of the document that serves as an id
   selectedPageRoute: string = ''; // route in the server for current page for the page mode
   loading = true;
@@ -140,7 +141,6 @@ export class NeuroneSerpComponent implements OnInit {
     this.mode = 'serp';
 
     // log to database
-
     // find document for easy access to its data
     let currentDoc;
     for (const doc of this.documents) {
@@ -185,6 +185,8 @@ export class NeuroneSerpComponent implements OnInit {
     this.mode = 'page';
     this.selectedPageRoute = this.routes[document.id];
     this.selectedPageName = document.id;
+    // only show buttons if the user is logged in
+    this.showUserSaveButtons = this.authService.getAuth();
 
     // log to database
     const docRank = this.calculateDocRank();
@@ -333,10 +335,46 @@ export class NeuroneSerpComponent implements OnInit {
           console.log(res);
         },
         error: (err: any) => {
-          console.log(err);
+          console.error(err);
         }
       });
     }
   }
 
+  saveBookmark() {
+
+    if (this.authService.getAuth()){
+
+      const bookmarkData = {
+        userId: this.authService.getUserId(),
+        bookmark: this.selectedPageName
+      }
+
+      this.http.post("http://localhost:" + environment.neuroneProfilePort + "/search/bookmark", bookmarkData)
+        .subscribe({
+          next: (res: any) => {
+            console.log(res);
+          },
+          error: (err: any) => {
+            console.error(err);
+          }
+        })
+    }
+  }
+
+  //test for saved bookmarks of the user get
+  getBookmarks() {
+    console.log("?????????????")
+
+    this.http.get("http://localhost:" + environment.neuroneProfilePort + "/search/bookmark/" + this.authService.getUserId())
+      .subscribe({
+        next: (res: any) => {
+          console.log(res);
+        },
+          error: (err: any) => {
+            console.error(err);
+          }
+      })
+
+  }
 }

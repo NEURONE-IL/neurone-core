@@ -44,6 +44,12 @@
 </div>
 
 <div *ngIf="mode==='page'">
-  <button mat-raised-button  (click)="switchToSerpMode()">Return to Search Results</button>
+  <mat-toolbar style="min-height:10px" color="primary">
+    <button mat-raised-button (click)="switchToSerpMode()">Return to Search Results</button>
+    <span class="spacer"></span>
+    <button mat-raised-button (click)="getBookmarks()">Get User Data (for tests)</button>
+    <button *ngIf="showUserSaveButtons" mat-raised-button>Save Snippet</button>
+    <button *ngIf="showUserSaveButtons" mat-raised-button (click)="saveBookmark()">Save Bookmark</button>
+  </mat-toolbar>
   <iframe title="Selected page of Neurone SERP" styleRef="./wikipedia.css" sandbox="allow-top-navigation" [src]='selectedPageRoute | safe' class="neurone-iframe" styleRef="./wikipedia.css"></iframe>
 </div>
