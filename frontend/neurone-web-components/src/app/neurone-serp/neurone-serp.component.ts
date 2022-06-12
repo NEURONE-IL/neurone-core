@@ -48,6 +48,8 @@ export class NeuroneSerpComponent implements OnInit {
   searchOnline = false;
   lastQuery = '';
 
+  snippetWindowOpened = false;
+
   // log for neurone-profile
   @Input() logEnabled = true;
 
@@ -343,28 +345,29 @@ export class NeuroneSerpComponent implements OnInit {
 
   saveBookmark() {
 
-    if (this.authService.getAuth()){
-
-      const bookmarkData = {
-        userId: this.authService.getUserId(),
-        bookmark: this.selectedPageName
-      }
-
-      this.http.post("http://localhost:" + environment.neuroneProfilePort + "/search/bookmark", bookmarkData)
-        .subscribe({
-          next: (res: any) => {
-            console.log(res);
-          },
-          error: (err: any) => {
-            console.error(err);
-          }
-        })
+    if (!this.authService.getAuth()){
+      return;
     }
+
+    const bookmarkData = {
+      userId: this.authService.getUserId(),
+      bookmark: this.selectedPageName
+    }
+
+    this.http.post("http://localhost:" + environment.neuroneProfilePort + "/search/bookmark", bookmarkData)
+      .subscribe({
+        next: (res: any) => {
+          console.log(res);
+        },
+        error: (err: any) => {
+          console.error(err);
+        }
+      })
+
   }
 
   //test for saved bookmarks of the user get
   getBookmarks() {
-    console.log("?????????????")
 
     this.http.get("http://localhost:" + environment.neuroneProfilePort + "/search/bookmark/" + this.authService.getUserId())
       .subscribe({
@@ -374,6 +377,40 @@ export class NeuroneSerpComponent implements OnInit {
           error: (err: any) => {
             console.error(err);
           }
+      })
+
+  }
+
+  // snippet functions
+  changeSnippetFormStatus() {
+    this.snippetWindowOpened = !this.snippetWindowOpened;
+  }
+
+  saveSnippet(text: string) {
+
+    if (!this.authService.getAuth()){
+      return;
+    }
+
+    // find index in documents array
+    let currDocIndex = this.documents.findIndex(doc => {
+      return doc.id === this.selectedPageName
+    });
+
+    const snippetData = {
+      userId: this.authService.getUserId(),
+      text: text,
+      website: this.documents[currDocIndex].url_t
+    }
+
+    this.http.post("http://localhost:" + environment.neuroneProfilePort + "/search/snippet", snippetData)
+      .subscribe({
+        next: (res: any) => {
+          console.log(res);
+        },
+        error: (err: any) => {
+          console.error(err);
+        }
       })
 
   }

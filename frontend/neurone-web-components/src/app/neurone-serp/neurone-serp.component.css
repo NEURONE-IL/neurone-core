@@ -117,5 +117,26 @@ hr {
   height: 86.9vh;        /* Viewport-relative units */
   width: 100%;
   overflow-x: hidden;
-  /*pointer-events: none;*/
+  /*pointer-events: none;*/ /*disables mouse interaction but revives logger mouse events*/
+}
+
+.snippet-area {
+  margin-right: 0;
+  margin-left: auto;
+  width: 500px;
+}
+
+.snippet-input {
+  width: 90%;
+  margin-left: 1rem;
+  margin-top: 1rem;
+  margin-right: 1rem;
+  margin-bottom: 0px;
+  height: auto;
+}
+
+.snippet-button {
+  padding-left: 345px;
+  margin-right: 0;
+  margin-left: auto;
 }
