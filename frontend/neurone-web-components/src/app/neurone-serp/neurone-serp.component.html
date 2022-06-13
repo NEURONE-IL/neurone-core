@@ -2,7 +2,7 @@
   <p>Search not connected, please make sure neurone-search is online and refresh.</p>
 </div>
 
-<div *ngIf="mode==='serp'" class="serp-container">
+<div *ngIf="mode==='serp'" class="serp-container" #serp>
   <div *ngIf="!fullScreenMode" class="search-small">
     <img src="../../assets/searchlogo.png" alt="neurone logo" (click)="fullScreenMode=true" class="search-logo-pointer">
     <div class="search-small-input">
@@ -24,7 +24,7 @@
     <div *ngFor="let doc of documents">
       <div class="document">
         <p class="document-header">{{doc.url_t}}</p>
-        <a href=# (click)="switchToPageMode(doc)" class="document-title">{{doc.title_t}}</a>
+        <a href="javascript:void(0)" (click)="switchToPageMode(doc, serp)" class="document-title">{{doc.title_t}}</a>
         <p [innerHTML]="buildSnippet(highlights[doc.id])" class="document-desc"></p>
       </div>
     </div>
@@ -48,8 +48,8 @@
     <button mat-raised-button (click)="switchToSerpMode()">Return to Search Results</button>
     <span class="spacer"></span>
     <button mat-raised-button (click)="getBookmarks()">Get User Data (for tests)</button>
-    <button *ngIf="showUserSaveButtons" mat-raised-button (click)="changeSnippetFormStatus()">Save Snippet</button>
-    <button *ngIf="showUserSaveButtons" mat-raised-button (click)="saveBookmark()">Save Bookmark</button>
+    <button *ngIf="showUserSaveButtons" style="margin-left: 1rem" mat-raised-button (click)="changeSnippetFormStatus()">Save Snippet</button>
+    <button *ngIf="showUserSaveButtons" style="margin-left: 1rem" mat-raised-button (click)="saveBookmark()">Save Bookmark</button>
   </mat-toolbar>
   <mat-card *ngIf="snippetWindowOpened" class="snippet-area">
     <mat-form-field class="snippet-input">

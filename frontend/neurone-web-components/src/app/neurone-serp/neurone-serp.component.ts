@@ -180,15 +180,19 @@ export class NeuroneSerpComponent implements OnInit {
   /**
    * switches to the full screen iframe mode that shows the document selected from the SERP
    * @param document document to show in the iframe
+   * @param elem element in template to scroll to after clicking a search result
    * @returns void
    */
-  switchToPageMode(document: searchDocument) {
+  switchToPageMode(document: searchDocument, elem: HTMLElement) {
     console.log("SWITCHING TO Page MODE: new url: ", this.routes[document.id]);
     this.mode = 'page';
     this.selectedPageRoute = this.routes[document.id];
     this.selectedPageName = document.id;
     // only show buttons if the user is logged in
     this.showUserSaveButtons = this.authService.getAuth();
+
+    // scroll to toolbar
+    elem.scrollIntoView({behavior: 'smooth'});
 
     // log to database
     const docRank = this.calculateDocRank();
@@ -351,15 +355,18 @@ export class NeuroneSerpComponent implements OnInit {
 
     const bookmarkData = {
       userId: this.authService.getUserId(),
-      bookmark: this.selectedPageName
+      bookmark: this.selectedPageName,
+      date: Date.now()
     }
 
     this.http.post("http://localhost:" + environment.neuroneProfilePort + "/search/bookmark", bookmarkData)
       .subscribe({
         next: (res: any) => {
+          alert("Bookmark saved!");
           console.log(res);
         },
         error: (err: any) => {
+          alert("Bookmark could not be saved.");
           console.error(err);
         }
       })
@@ -378,7 +385,6 @@ export class NeuroneSerpComponent implements OnInit {
             console.error(err);
           }
       })
-
   }
 
   // snippet functions
@@ -400,15 +406,18 @@ export class NeuroneSerpComponent implements OnInit {
     const snippetData = {
       userId: this.authService.getUserId(),
       text: text,
-      website: this.documents[currDocIndex].url_t
+      website: this.documents[currDocIndex].url_t,
+      date: Date.now()
     }
 
     this.http.post("http://localhost:" + environment.neuroneProfilePort + "/search/snippet", snippetData)
       .subscribe({
         next: (res: any) => {
+          alert("Snippet saved!");
           console.log(res);
         },
         error: (err: any) => {
+          alert("Snippet could not be saved.")
           console.error(err);
         }
       })
