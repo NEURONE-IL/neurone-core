@@ -13,8 +13,10 @@
   <div *ngIf="fullScreenMode" class="search-big">
     <img src="../../assets/searchlogo.png" alt="neurone logo">
     <div class="search-big-input">
-      <input [formControl]="searchForm" (keydown.enter)="onSeachRequest()">
-      <button mat-raised-button color="primary" style="border-radius: 10px" type="button" (click)="onSeachRequest()">Search</button>
+      <div class="search-big-input-box">
+        <input [formControl]="searchForm" (keydown.enter)="onSeachRequest()">
+        <button mat-raised-button color="primary" style="border-radius: 10px" type="button" (click)="onSeachRequest()">Search</button>
+      </div>
     </div>
      <mat-spinner *ngIf="loading"></mat-spinner>
   </div>
@@ -49,7 +51,7 @@
     <span class="spacer"></span>
     <button mat-raised-button (click)="getBookmarks()">Get User Data (for tests)</button>
     <button *ngIf="showUserSaveButtons" style="margin-left: 1rem" mat-raised-button (click)="changeSnippetFormStatus()">Save Snippet</button>
-    <button *ngIf="showUserSaveButtons" style="margin-left: 1rem" mat-raised-button (click)="saveBookmark()">Save Bookmark</button>
+    <button *ngIf="showUserSaveButtons" style="margin-left: 1rem" mat-raised-button (click)="saveBookmark()">{{bookmarkSaveMode === 'save' ? 'Save Bookmark' : 'Unsave Bookmark'}}</button>
   </mat-toolbar>
   <mat-card *ngIf="snippetWindowOpened" class="snippet-area">
     <mat-form-field class="snippet-input">
@@ -57,13 +59,14 @@
       <textarea rows="5" matInput #snippetInput ></textarea>
     </mat-form-field>
     <div class="snippet-button">
-      <button mat-button color="primary" type="button" (click)="saveSnippet(snippetInput.value)">Save to Profile</button>
+      <button mat-button color="primary" type="button" (click)="saveSnippet()">Save to Profile</button>
       <button mat-button color="warn" (click)="changeSnippetFormStatus()">Close</button>
     </div>
   </mat-card>
   <iframe
+    #neuronePage
     title="Selected page of Neurone SERP"
-    sandbox
+
     [src]='selectedPageRoute | safe'
     class="neurone-iframe"
     styleRef="./wikipedia.css"> <!--TODO: fix wikipedia or remove-->

@@ -1,13 +1,13 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, Input, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, HostListener, Input, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { PageEvent } from '@angular/material/paginator';
 import { environment } from 'src/environments/environment';
 import { AuthService } from '../auth.service';
 
 interface searchDocument {
-  docId_s: string,
-  id: string,
+  docId_s: string, // id in the database
+  id: string, // unique name
   title_t: string,
   indexedBody_t: string,
   url_t: string,
@@ -44,6 +44,7 @@ export class NeuroneSerpComponent implements OnInit {
   showUserSaveButtons = false;
   selectedPageName = ''; // name of the document that serves as an id
   selectedPageRoute: string = ''; // route in the server for current page for the page mode
+  bookmarkSaveMode: 'save' | 'unsave' = 'save';
   loading = true;
   searchOnline = false;
   lastQuery = '';
@@ -106,7 +107,12 @@ export class NeuroneSerpComponent implements OnInit {
     };
 
   }
-
+/* TODO: test to listen to iframe messages
+  @HostListener('window:message', ['$event'])
+  onMessage(event: any) {
+    console.log("RECEIVED EVENT: ", event);
+  }
+*/
   /**
    * finds all of the document names and sends them in an array in the order they are shown in the results page
    * @returns array with document names
@@ -161,7 +167,7 @@ export class NeuroneSerpComponent implements OnInit {
       userId: this.authService.getUserId(),
       userEmail: this.authService.getEmail(),
       date: Date.now(),
-      description: "Returned to SERP from webpage",
+      description: "Returned to SERP",
       query: this.lastQuery,
       selectedPageName: currentDoc.id,
       selectedPageUrl: currentDoc.url_t,
@@ -185,6 +191,7 @@ export class NeuroneSerpComponent implements OnInit {
    */
   switchToPageMode(document: searchDocument, elem: HTMLElement) {
     console.log("SWITCHING TO Page MODE: new url: ", this.routes[document.id]);
+
     this.mode = 'page';
     this.selectedPageRoute = this.routes[document.id];
     this.selectedPageName = document.id;
@@ -194,6 +201,29 @@ export class NeuroneSerpComponent implements OnInit {
     // scroll to toolbar
     elem.scrollIntoView({behavior: 'smooth'});
 
+    // check if this page is part of the bookmarks in neurone profile and change the button behavious accordingly
+    if (this.authService.getAuth()){
+      this.http.get("http://localhost:" + environment.neuroneProfilePort + "/search/bookmark/saved/" + this.authService.getUserId())
+        .subscribe({
+          next: (res: any) => {
+
+            // check if current page is part of saved bookmarks
+            for (const bookmark of res.data) {
+              if (this.selectedPageName === bookmark.website) {
+                this.bookmarkSaveMode = 'unsave';
+                break;
+              } else {
+                this.bookmarkSaveMode = 'save';
+              }
+            }
+
+          },
+          error: (err) => {
+            console.error(err);
+          }
+        })
+    }
+
     // log to database
     const docRank = this.calculateDocRank();
 
@@ -201,7 +231,7 @@ export class NeuroneSerpComponent implements OnInit {
       userId: this.authService.getUserId(),
       userEmail: this.authService.getEmail(),
       date: Date.now(),
-      description: "Selected a page from the SERP",
+      description: "Opened Web Page",
       query: this.lastQuery,
       selectedPageName: document.id,
       selectedPageUrl: document.url_t,
@@ -240,7 +270,7 @@ export class NeuroneSerpComponent implements OnInit {
   onChangedPage(pageData: PageEvent) {
     this.currentPage = pageData.pageIndex
     this.docsInPage = pageData.pageSize
-    this.makeSearchQuery(this.lastQuery, "Switched Page of the Seach Results");
+    this.makeSearchQuery(this.lastQuery, "Navigated to other results page");
   }
 
   /**
@@ -353,23 +383,55 @@ export class NeuroneSerpComponent implements OnInit {
       return;
     }
 
+    // find the url using the selected doc name
+    const websiteUrlToSave = this.documents.find(elem => elem.id === this.selectedPageName)?.url_t;
+
     const bookmarkData = {
       userId: this.authService.getUserId(),
-      bookmark: this.selectedPageName,
-      date: Date.now()
+      website: this.selectedPageName,
+      websiteUrl: websiteUrlToSave,
+      date: Date.now(),
+      saved: this.bookmarkSaveMode === 'save' // true if save, false if unsave
     }
 
-    this.http.post("http://localhost:" + environment.neuroneProfilePort + "/search/bookmark", bookmarkData)
+    // update bookmark to be saved, if it's a new bookmark it will be created
+    this.http.put("http://localhost:" + environment.neuroneProfilePort + "/search/bookmark/" + this.authService.getUserId() + "/" + this.selectedPageName, bookmarkData)
       .subscribe({
-        next: (res: any) => {
-          alert("Bookmark saved!");
+        next: (res) => {
+          if (this.bookmarkSaveMode === 'save') {
+            alert("Bookmark saved!");
+            this.bookmarkSaveMode = 'unsave'
+          } else if (this.bookmarkSaveMode === 'unsave') {
+            alert("Bookmark deleted!");
+            this.bookmarkSaveMode = 'save'
+          }
           console.log(res);
+
         },
-        error: (err: any) => {
-          alert("Bookmark could not be saved.");
-          console.error(err);
+        error: (err) => {
+
+          // resource not found so we create it
+          if (err.status === 404) {
+            this.http.post("http://localhost:" + environment.neuroneProfilePort + "/search/bookmark", bookmarkData)
+              .subscribe({
+                next: (res) => {
+                  alert("Bookmark saved!");
+                  console.log(res);
+                },
+                error: (err) => {
+                  alert("Bookmark could not be saved.");
+                  console.error(err);
+                }
+              })
+          }
+          else {
+            alert("Bookmark could not be saved.");
+            console.error(err);
+          }
         }
-      })
+      });
+
+
 
   }
 
@@ -392,17 +454,19 @@ export class NeuroneSerpComponent implements OnInit {
     this.snippetWindowOpened = !this.snippetWindowOpened;
   }
 
-  saveSnippet(text: string) {
+  saveSnippet() {
 
     if (!this.authService.getAuth()){
       return;
     }
+    console.log(window.getSelection()?.toString());
 
     // find index in documents array
     let currDocIndex = this.documents.findIndex(doc => {
       return doc.id === this.selectedPageName
     });
 
+/*  TODO: fix backend to receive a log, test js function to yoink highlighted text
     const snippetData = {
       userId: this.authService.getUserId(),
       text: text,
@@ -421,6 +485,6 @@ export class NeuroneSerpComponent implements OnInit {
           console.error(err);
         }
       })
-
+*/
   }
 }

@@ -63,15 +63,20 @@ hr {
 .search-big {
   padding-top: 4rem;
   padding-bottom: 10rem;
-  width: 50%;
+  width: 100%;
   height: auto;
   margin: 0 auto;
 }
 
 .search-big-input {
-  display: block;
-  width: 250%;
   margin-top: 2rem;
+}
+
+.search-big-input-box {
+  position: relative;
+  display: block;
+  margin-left: 29%;
+  width: 100%
 }
 
 .document {
