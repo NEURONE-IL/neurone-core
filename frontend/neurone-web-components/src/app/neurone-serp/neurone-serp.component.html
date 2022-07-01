@@ -6,7 +6,7 @@
   <div *ngIf="!fullScreenMode" class="search-small">
     <img src="../../assets/searchlogo.png" alt="neurone logo" (click)="fullScreenMode=true" class="search-logo-pointer">
     <div class="search-small-input">
-      <input [formControl]="searchForm" (keydown.enter)="onSeachRequest()">
+      <input id="neurone-input-small" [formControl]="searchForm" (keydown.enter)="onSeachRequest()">
       <button mat-raised-button color="primary" style="border-radius: 10px" type="button" (click)="onSeachRequest()">Search</button>
     </div>
   </div>
@@ -14,7 +14,7 @@
     <img src="../../assets/searchlogo.png" alt="neurone logo">
     <div class="search-big-input">
       <div class="search-big-input-box">
-        <input [formControl]="searchForm" (keydown.enter)="onSeachRequest()">
+        <input id="neurone-input-big" [formControl]="searchForm" (keydown.enter)="onSeachRequest()">
         <button mat-raised-button color="primary" style="border-radius: 10px" type="button" (click)="onSeachRequest()">Search</button>
       </div>
     </div>

@@ -76,7 +76,7 @@ hr {
   position: relative;
   display: block;
   margin-left: 29%;
-  width: 100%
+  width: 100%;
 }
 
 .document {
@@ -93,7 +93,7 @@ hr {
   margin-bottom: 0px;
 }
 
-.document-title{
+.document-title {
   display: inline-block;
   line-height: 1.3;
   margin-bottom: 0px;

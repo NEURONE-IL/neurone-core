@@ -107,12 +107,8 @@ export class NeuroneSerpComponent implements OnInit {
     };
 
   }
-/* TODO: test to listen to iframe messages
-  @HostListener('window:message', ['$event'])
-  onMessage(event: any) {
-    console.log("RECEIVED EVENT: ", event);
-  }
-*/
+
+
   /**
    * finds all of the document names and sends them in an array in the order they are shown in the results page
    * @returns array with document names
