@@ -49,8 +49,6 @@ export class NeuroneSerpComponent implements OnInit {
   searchOnline = false;
   lastQuery = '';
 
-  snippetWindowOpened = false;
-
   // log for neurone-profile
   @Input() logEnabled = true;
 
@@ -66,6 +64,18 @@ export class NeuroneSerpComponent implements OnInit {
   highlights: any;  // highlights for the documents, also provided by neurone search. it's an object with keys representing the doc ID
   routes: any; // routes of the downloaded documents, similar format to  highlights
 
+  // listen to iframe messages
+  @HostListener('window:message', ['$event'])
+  onMessage(event: MessageEvent){
+
+    // text selection iframe message, triggered by serp function that requests the selected text
+    if (event.data.type === 'textSelection'){
+      if (typeof event.data.selection === 'string' && event.data.selection !== ''){
+        this.saveSnippet(event.data.selection);
+      }
+    }
+
+  }
 
   constructor(private authService: AuthService, private http: HttpClient) { }
 
@@ -373,6 +383,9 @@ export class NeuroneSerpComponent implements OnInit {
     }
   }
 
+  /**
+   * save current opened page in neurone serp to the bookmarks in backend
+   */
   saveBookmark() {
 
     if (!this.authService.getAuth()){
@@ -445,31 +458,43 @@ export class NeuroneSerpComponent implements OnInit {
       })
   }
 
-  // snippet functions
-  changeSnippetFormStatus() {
-    this.snippetWindowOpened = !this.snippetWindowOpened;
-  }
 
-  saveSnippet() {
+  /**
+   * send a message to an iframe requesting the snippet (text selection) to use (the webpage in the iframe has to implement this)
+   * @param iframe html iframe element that will receive the message request
+   */
+  sendSnippetRequest(iframe: HTMLIFrameElement) {
 
     if (!this.authService.getAuth()){
       return;
     }
-    console.log(window.getSelection()?.toString());
 
-    // find index in documents array
-    let currDocIndex = this.documents.findIndex(doc => {
-      return doc.id === this.selectedPageName
-    });
+    // send iframe message to send string to neurone-serp
+    iframe.contentWindow?.postMessage({message: "get_snippet"}, "*");
+  }
 
-/*  TODO: fix backend to receive a log, test js function to yoink highlighted text
+  /**
+   * save text snippet to neurone-search backend
+   * @param snippet text to save
+   */
+  saveSnippet(snippet: string) {
+
+    if (!this.authService.getAuth()){
+        return;
+      }
+
+    // find the url using the selected doc name
+    const websiteUrlToSave = this.documents.find(elem => elem.id === this.selectedPageName)?.url_t;
+
     const snippetData = {
       userId: this.authService.getUserId(),
-      text: text,
-      website: this.documents[currDocIndex].url_t,
+      snippet: snippet, // TODO: snippet field is ok?
+      website: this.selectedPageName,
+      wensiteUrl: websiteUrlToSave,
       date: Date.now()
     }
 
+    console.log("snippetData to send: ", snippetData);
     this.http.post("http://localhost:" + environment.neuroneProfilePort + "/search/snippet", snippetData)
       .subscribe({
         next: (res: any) => {
@@ -481,6 +506,6 @@ export class NeuroneSerpComponent implements OnInit {
           console.error(err);
         }
       })
-*/
+
   }
 }

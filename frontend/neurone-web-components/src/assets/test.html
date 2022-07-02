@@ -16,6 +16,16 @@
   document.addEventListener('keydown', () => {postKeyboardEvent(event, "Iframe Key Down")}, true);
   document.addEventListener('keyup', () => {postKeyboardEvent(event, "Iframe Key Up")}, true);
 
+  // recieve messages from another window
+  window.onmessage = function(e) {
+    // neurone serp message to request the selected text from the iframe/window
+    if (e.data.message == 'get_snippet') {
+      const selectedText = window.getSelection().toString();
+      window.parent.postMessage({message: "Sent text selection from neurone-search page", type: "textSelection", selection: selectedText}, "*");
+    }
+
+  };
+
   function postMouseEvent(evt, type) {
 
     // get the useful mouse and window data for the logger
