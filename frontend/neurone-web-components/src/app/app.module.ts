@@ -20,7 +20,6 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatPaginatorModule } from '@angular/material/paginator';
 
 
-import { NeuroneNavbarComponent } from './neurone-navbar/neurone-navbar.component';
 import { AuthInterceptor } from './auth-interceptor';
 import { InputComponent } from './neurone-forms-old/input/input.component';
 import { ParagraphComponent } from './neurone-forms-old/paragraph/paragraph.component';
@@ -37,10 +36,12 @@ import { KeyboardDirective } from './neurone-logger/keyboard.directive';
 import { ScrollDirective } from './neurone-logger/scroll.directive';
 import { NeuroneSerpComponent } from './neurone-serp/neurone-serp.component';
 
+import { NeuroneAngularComponentsModule } from 'neurone-angular-components';
+
+
 @NgModule({
   declarations: [
     AppComponent,
-    NeuroneNavbarComponent,
     InputComponent,
     ParagraphComponent,
     MultipleChoiceComponent,
@@ -72,7 +73,8 @@ import { NeuroneSerpComponent } from './neurone-serp/neurone-serp.component';
     MatNativeDateModule,
     MatIconModule,
     MatPaginatorModule,
-    HttpClientModule
+    HttpClientModule,
+    NeuroneAngularComponentsModule
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true},
@@ -84,7 +86,6 @@ export class AppModule {
 
   constructor (private injector: Injector) {
     const elements: any[] = [
-      [NeuroneNavbarComponent, "neurone-navbar"],
       [NeuroneFormsComponent, "neurone-forms"],
       [InputComponent, "neurone-forms-input"],
       [ParagraphComponent, "neurone-forms-paragraph"],
