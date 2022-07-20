@@ -18,6 +18,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSelectModule } from '@angular/material/select';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatNativeDateModule } from '@angular/material/core';
 
 
 import { AuthInterceptor } from './auth-interceptor';
@@ -28,9 +29,8 @@ import { MultipleCheckboxComponent } from './neurone-forms-old/multiple-checkbox
 import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
 import { ListComponent } from './neurone-forms-old/list/list.component';
 import { DatePickerComponent } from './neurone-forms-old/date-picker/date-picker.component';
-import { MatNativeDateModule } from '@angular/material/core';
+
 import { SubmitComponent } from './neurone-forms-old/submit/submit.component';
-import { NeuroneFormsComponent } from './neurone-forms/neurone-forms.component';
 import { MouseDirective } from './neurone-logger/mouse.directive';
 import { KeyboardDirective } from './neurone-logger/keyboard.directive';
 import { ScrollDirective } from './neurone-logger/scroll.directive';
@@ -49,7 +49,6 @@ import { NeuroneAngularComponentsModule } from 'neurone-angular-components';
     ListComponent,
     DatePickerComponent,
     SubmitComponent,
-    NeuroneFormsComponent,
     MouseDirective,
     KeyboardDirective,
     ScrollDirective,
@@ -78,7 +77,7 @@ import { NeuroneAngularComponentsModule } from 'neurone-angular-components';
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true},
-    {provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: {appearance: "outline"}}
+    { provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: {appearance: "outline"} }
   ],
   bootstrap: [AppComponent]
 })
@@ -86,7 +85,6 @@ export class AppModule {
 
   constructor (private injector: Injector) {
     const elements: any[] = [
-      [NeuroneFormsComponent, "neurone-forms"],
       [InputComponent, "neurone-forms-input"],
       [ParagraphComponent, "neurone-forms-paragraph"],
       [MultipleChoiceComponent, "neurone-forms-multiple-choice"],
