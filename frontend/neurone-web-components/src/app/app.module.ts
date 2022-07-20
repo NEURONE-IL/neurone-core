@@ -2,9 +2,9 @@ import { Injector, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { createCustomElement } from '@angular/elements';
-import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http'
+import { HttpClientModule } from '@angular/common/http'
 
-import { AppComponent, SafePipe } from './app.component';
+import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { MatCardModule } from '@angular/material/card';
@@ -20,18 +20,14 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatNativeDateModule } from '@angular/material/core';
 
-
-import { AuthInterceptor } from './auth-interceptor';
 import { InputComponent } from './neurone-forms-old/input/input.component';
 import { ParagraphComponent } from './neurone-forms-old/paragraph/paragraph.component';
 import { MultipleChoiceComponent } from './neurone-forms-old/multiple-choice/multiple-choice.component';
 import { MultipleCheckboxComponent } from './neurone-forms-old/multiple-checkbox/multiple-checkbox.component';
-import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
 import { ListComponent } from './neurone-forms-old/list/list.component';
 import { DatePickerComponent } from './neurone-forms-old/date-picker/date-picker.component';
 
 import { SubmitComponent } from './neurone-forms-old/submit/submit.component';
-import { NeuroneSerpComponent } from './neurone-serp/neurone-serp.component';
 
 import { NeuroneAngularComponentsModule } from 'neurone-angular-components';
 
@@ -46,8 +42,6 @@ import { NeuroneAngularComponentsModule } from 'neurone-angular-components';
     ListComponent,
     DatePickerComponent,
     SubmitComponent,
-    NeuroneSerpComponent,
-    SafePipe
   ],
   imports: [
     BrowserModule,

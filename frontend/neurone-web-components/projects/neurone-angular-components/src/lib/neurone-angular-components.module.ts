@@ -1,7 +1,8 @@
 import { Injector, NgModule } from '@angular/core';
-import { NeuroneAngularComponentsComponent } from './neurone-angular-components.component';
+import { NeuroneAngularComponentsComponent, SafePipe } from './neurone-angular-components.component';
 import { NeuroneNavbarComponent } from './neurone-navbar/neurone-navbar.component';
 import { NeuroneFormsComponent } from './neurone-forms/neurone-forms.component';
+import { NeuroneSerpComponent } from './neurone-serp/neurone-serp.component';
 import { MouseLogDirective } from './neurone-logger/mouse.directive';
 import { KeyboardLogDirective } from './neurone-logger/keyboard.directive';
 import { ScrollLogDirective } from './neurone-logger/scroll.directive';
@@ -35,6 +36,8 @@ import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
     MouseLogDirective,
     KeyboardLogDirective,
     ScrollLogDirective,
+    NeuroneSerpComponent,
+    SafePipe
   ],
   imports: [
     CommonModule,
@@ -57,6 +60,7 @@ import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
     NeuroneAngularComponentsComponent,
     NeuroneNavbarComponent,
     NeuroneFormsComponent,
+    NeuroneSerpComponent,
     MouseLogDirective,
     KeyboardLogDirective,
     ScrollLogDirective,
@@ -72,6 +76,7 @@ export class NeuroneAngularComponentsModule {
       const elements: any[] = [
       [NeuroneNavbarComponent, "neurone-navbar"],
       [NeuroneFormsComponent, "neurone-forms"],
+      [NeuroneSerpComponent, "neurone-serp"],
       /*
       [InputComponent, "neurone-forms-input"],
       [ParagraphComponent, "neurone-forms-paragraph"],
