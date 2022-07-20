@@ -2,7 +2,7 @@ import { Directive, HostListener, OnInit } from "@angular/core";
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from "../auth.service";
 import { throttle } from './throttle.decorator';
-import { environment } from "src/environments/environment";
+import { NeuroneConfig } from "../neurone-components-config";
 
 interface NeuroneIframeMouseData {
   type: string,
@@ -24,7 +24,7 @@ interface NeuroneIframeWindowData {
 @Directive({
   selector: '[neurone-logger-mouse]'
 })
-export class MouseDirective implements OnInit {
+export class MouseLogDirective implements OnInit {
 
   handlerId = "Neurone Mouse Logger";
 
@@ -58,7 +58,7 @@ export class MouseDirective implements OnInit {
 
     console.log("Neurone Logger Mouse data:\n", data);
 
-    this.http.post("http://localhost:" + environment.neuroneProfilePort + "/logger/mouse", data).subscribe({
+    this.http.post("http://localhost:" + NeuroneConfig.neuroneProfilePort + "/logger/mouse", data).subscribe({
       next: (_ => {}),
       error: (err => {console.error(err)})
     });

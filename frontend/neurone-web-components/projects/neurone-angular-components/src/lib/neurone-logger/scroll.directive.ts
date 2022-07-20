@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Directive, HostListener } from '@angular/core';
-import { environment } from 'src/environments/environment';
 import { AuthService } from '../auth.service';
+import { NeuroneConfig } from '../neurone-components-config';
 import { throttle } from './throttle.decorator';
 
 interface NeuroneIframeScrollData {
@@ -18,7 +18,7 @@ interface NeuroneIframeScrollData {
 @Directive({
   selector: '[neurone-logger-scroll]'
 })
-export class ScrollDirective {
+export class ScrollLogDirective {
 
   handlerId = "Neurone Scroll Logger";
 
@@ -46,7 +46,7 @@ export class ScrollDirective {
 
     console.log("Neurone Logger Scroll data:\n", data);
 
-    this.http.post("http://localhost:" + environment.neuroneProfilePort + "/logger/scroll", data).subscribe({
+    this.http.post("http://localhost:" + NeuroneConfig.neuroneProfilePort + "/logger/scroll", data).subscribe({
       next: (_ => {}),
       error: (err => {console.error(err)})
     });

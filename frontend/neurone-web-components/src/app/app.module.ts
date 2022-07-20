@@ -31,9 +31,6 @@ import { ListComponent } from './neurone-forms-old/list/list.component';
 import { DatePickerComponent } from './neurone-forms-old/date-picker/date-picker.component';
 
 import { SubmitComponent } from './neurone-forms-old/submit/submit.component';
-import { MouseDirective } from './neurone-logger/mouse.directive';
-import { KeyboardDirective } from './neurone-logger/keyboard.directive';
-import { ScrollDirective } from './neurone-logger/scroll.directive';
 import { NeuroneSerpComponent } from './neurone-serp/neurone-serp.component';
 
 import { NeuroneAngularComponentsModule } from 'neurone-angular-components';
@@ -49,9 +46,6 @@ import { NeuroneAngularComponentsModule } from 'neurone-angular-components';
     ListComponent,
     DatePickerComponent,
     SubmitComponent,
-    MouseDirective,
-    KeyboardDirective,
-    ScrollDirective,
     NeuroneSerpComponent,
     SafePipe
   ],
@@ -76,8 +70,6 @@ import { NeuroneAngularComponentsModule } from 'neurone-angular-components';
     NeuroneAngularComponentsModule
   ],
   providers: [
-    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true},
-    { provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: {appearance: "outline"} }
   ],
   bootstrap: [AppComponent]
 })

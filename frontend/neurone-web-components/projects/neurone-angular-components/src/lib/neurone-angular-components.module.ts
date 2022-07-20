@@ -1,6 +1,10 @@
 import { Injector, NgModule } from '@angular/core';
 import { NeuroneAngularComponentsComponent } from './neurone-angular-components.component';
 import { NeuroneNavbarComponent } from './neurone-navbar/neurone-navbar.component';
+import { NeuroneFormsComponent } from './neurone-forms/neurone-forms.component';
+import { MouseLogDirective } from './neurone-logger/mouse.directive';
+import { KeyboardLogDirective } from './neurone-logger/keyboard.directive';
+import { ScrollLogDirective } from './neurone-logger/scroll.directive';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
@@ -20,14 +24,17 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { createCustomElement } from '@angular/elements';
 import { AuthInterceptor } from './auth-interceptor';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
-import { NeuroneFormsComponent } from './neurone-forms/neurone-forms.component';
 import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
+
 
 @NgModule({
   declarations: [
     NeuroneAngularComponentsComponent,
     NeuroneNavbarComponent,
-    NeuroneFormsComponent
+    NeuroneFormsComponent,
+    MouseLogDirective,
+    KeyboardLogDirective,
+    ScrollLogDirective,
   ],
   imports: [
     CommonModule,
@@ -49,7 +56,10 @@ import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
   exports: [
     NeuroneAngularComponentsComponent,
     NeuroneNavbarComponent,
-    NeuroneFormsComponent
+    NeuroneFormsComponent,
+    MouseLogDirective,
+    KeyboardLogDirective,
+    ScrollLogDirective,
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true},
@@ -60,9 +70,9 @@ export class NeuroneAngularComponentsModule {
 
   constructor (private injector: Injector) {
       const elements: any[] = [
-      [NeuroneNavbarComponent, "neurone-navbar"],/*
+      [NeuroneNavbarComponent, "neurone-navbar"],
       [NeuroneFormsComponent, "neurone-forms"],
-
+      /*
       [InputComponent, "neurone-forms-input"],
       [ParagraphComponent, "neurone-forms-paragraph"],
       [MultipleChoiceComponent, "neurone-forms-multiple-choice"],
