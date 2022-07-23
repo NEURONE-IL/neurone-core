@@ -8,6 +8,7 @@ import { KeyboardLogDirective } from './neurone-logger/keyboard.directive';
 import { ScrollLogDirective } from './neurone-logger/scroll.directive';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { HttpClientModule } from '@angular/common/http'
 
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
@@ -54,7 +55,8 @@ import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
     MatIconModule,
     MatPaginatorModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    HttpClientModule
   ],
   exports: [
     NeuroneAngularComponentsComponent,
@@ -66,6 +68,7 @@ import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
     ScrollLogDirective,
   ],
   providers: [
+    HttpClientModule,
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true},
     { provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: {appearance: "outline"} }
   ]

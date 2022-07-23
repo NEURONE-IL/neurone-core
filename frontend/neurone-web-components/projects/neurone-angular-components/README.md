@@ -1,4 +1,41 @@
-# NeuroneAngularComponents
+# Dependencies and installation
+
+```
+ng add @angular/material
+npm i @angular/elements
+npm i lodash.throttle
+npm i @types/lodash.throttle
+npm i neurone-angular-components
+```
+
+# Neurone Components included in HTML
+
+```html
+<neurone-navbar-component>
+<neurone-serp-component>
+<neurone-forms-component>
+```
+
+# Neurone Angular directives
+
+```
+neurone-logger-mouse
+neurone-logger-keyboard
+neurone-logger-scroll
+```
+
+# Use of Auth Service from components
+```ts
+//...
+import { AuthService } from 'neurone-angular-components';
+//...
+export class ExampleComponent {
+
+  constructor(private authService: AuthService) { }
+
+}
+
+```
 
 This library was generated with [Angular CLI](https://github.com/angular/angular-cli) version 13.0.0.
 
