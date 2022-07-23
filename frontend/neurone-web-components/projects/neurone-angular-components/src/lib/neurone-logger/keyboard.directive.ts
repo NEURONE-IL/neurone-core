@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Directive, HostListener } from '@angular/core';
-import { environment } from 'src/environments/environment';
 import { AuthService } from '../auth.service';
+import { NeuroneConfig } from '../neurone-components-config';
 
 interface NeuroneIframeKeyboardData {
   type: string,
@@ -25,7 +25,7 @@ interface NeuroneIframeWindowData {
 @Directive({
   selector: '[neurone-logger-keyboard]'
 })
-export class KeyboardDirective {
+export class KeyboardLogDirective {
 
   handlerId = "Neurone Keyboard Logger";
 
@@ -62,7 +62,7 @@ export class KeyboardDirective {
 
     console.log("Neurone Logger Keyboard data:\n", data);
 
-    this.http.post("http://localhost:" + environment.neuroneProfilePort + "/logger/keyboard", data).subscribe({
+    this.http.post("http://localhost:" + NeuroneConfig.neuroneProfilePort + "/logger/keyboard", data).subscribe({
       next: (_ => {}),
       error: (err => {console.error(err)})
     });

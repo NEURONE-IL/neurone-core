@@ -1,14 +1,14 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { JsonFormData, JsonFormControls } from './neurone-form.model';
-import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { AuthService } from '../auth.service';
 import { Subscription } from 'rxjs';
-import { environment } from 'src/environments/environment';
+import { NeuroneConfig } from '../neurone-components-config';
 
 
 @Component({
-  selector: 'app-neurone-forms',
+  selector: 'neurone-forms-component',
   templateUrl: './neurone-forms.component.html',
   styleUrls: ['./neurone-forms.component.css']
 })
@@ -72,7 +72,7 @@ export class NeuroneFormsComponent implements OnChanges, OnInit {
   loadForm(formName: string) {
     if (this.mode === "answer"){
       this.http
-      .get("http://localhost:" + environment.neuroneProfilePort + "/form/" + formName)
+      .get("http://localhost:" + NeuroneConfig.neuroneProfilePort + "/form/" + formName)
       .subscribe({
         next: (value: any) => {
           this.jsonFormData = value.form;
@@ -251,7 +251,7 @@ export class NeuroneFormsComponent implements OnChanges, OnInit {
 
     console.log(formData);
 
-    this.http.post("http://localhost:" + environment.neuroneProfilePort + "/profile/form", formData)
+    this.http.post("http://localhost:" + NeuroneConfig.neuroneProfilePort + "/profile/form", formData)
       .subscribe({
         next: response => {
           this.isLoading = false;
@@ -275,7 +275,7 @@ export class NeuroneFormsComponent implements OnChanges, OnInit {
       questions: this.jsonFormData.controls
     }
 
-    this.http.put("http://localhost:" + environment.neuroneProfilePort + "/form/" + formDataQuestionnaire.formName, formDataQuestionnaire)
+    this.http.put("http://localhost:" + NeuroneConfig.neuroneProfilePort + "/form/" + formDataQuestionnaire.formName, formDataQuestionnaire)
       .subscribe({
         next: response => {
           this.saveButtonText = "Saved!";
@@ -291,7 +291,7 @@ export class NeuroneFormsComponent implements OnChanges, OnInit {
   }
 
   onDeleteForm() {
-    this.http.delete("http://localhost:" + environment.neuroneProfilePort + "/form/" + this.jsonFormData.formName)
+    this.http.delete("http://localhost:" + NeuroneConfig.neuroneProfilePort + "/form/" + this.jsonFormData.formName)
       .subscribe({
         next: response => {
           this.deleteButtonText = "Deleted!";

@@ -2,8 +2,8 @@ import { HttpClient } from '@angular/common/http';
 import { Component, HostListener, Input, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { PageEvent } from '@angular/material/paginator';
-import { environment } from 'src/environments/environment';
 import { AuthService } from '../auth.service';
+import { NeuroneConfig } from '../neurone-components-config';
 
 interface searchDocument {
   docId_s: string, // id in the database
@@ -32,7 +32,7 @@ interface logDocument {
 }
 
 @Component({
-  selector: 'app-neurone-serp',
+  selector: 'neurone-serp-component',
   templateUrl: './neurone-serp.component.html',
   styleUrls: ['./neurone-serp.component.css', 'wikipedia.css'], // TODO: keep testing wiki style or remove
   encapsulation: ViewEncapsulation.None // this makes styling of the innerHTML possible
@@ -51,6 +51,7 @@ export class NeuroneSerpComponent implements OnInit {
 
   // log for neurone-profile
   @Input() logEnabled = true;
+  @Input() refreshIndex = false; // request an index refresh to the search backend when loading the page, useful for dev
 
   // pagination
   currentPage = 0;
@@ -83,25 +84,25 @@ export class NeuroneSerpComponent implements OnInit {
 
     // prod mode: simply ping the main neurone-search page, dev mode: refresh neurone-search index
     this.loading = true;
-    if (environment.production){
+
+    this.http.
+    get("http://localhost:" + NeuroneConfig.neuroneSearchPort, {responseType: 'text'})
+    .subscribe({
+      next: () => {
+        console.log("Connection with Neurone-Search back-end successful");
+        this.searchOnline = true;
+        this.loading = false;
+      },
+      error: (e) => {
+        console.error("Error connecting with Neurone-Search back-end.");
+        console.error(e);
+        this.loading = false;
+      }
+    });
+
+    if (this.refreshIndex) {
       this.http.
-      get("http://localhost:" + environment.neuroneSearchPort, {responseType: 'text'})
-      .subscribe({
-        next: () => {
-          console.log("Connection with Neurone-Search back-end successful");
-          this.searchOnline = true;
-          this.loading = false;
-        },
-        error: (e) => {
-         console.error("Error connecting with Neurone-Search back-end.");
-          console.error(e);
-         this.loading = false;
-        }
-      });
-    }
-    else {
-      this.http.
-        get("http://localhost:" + environment.neuroneSearchPort + "/refresh")
+        get("http://localhost:" + NeuroneConfig.neuroneSearchPort + "/refresh")
         .subscribe({
           next: () => {
             console.log("Connection with Neurone-Search back-end successful, index refreshed (development mode).");
@@ -209,7 +210,7 @@ export class NeuroneSerpComponent implements OnInit {
 
     // check if this page is part of the bookmarks in neurone profile and change the button behavious accordingly
     if (this.authService.getAuth()){
-      this.http.get("http://localhost:" + environment.neuroneProfilePort + "/search/bookmark/saved/" + this.authService.getUserId())
+      this.http.get("http://localhost:" + NeuroneConfig.neuroneProfilePort + "/search/bookmark/saved/" + this.authService.getUserId())
         .subscribe({
           next: (res: any) => {
 
@@ -309,7 +310,7 @@ export class NeuroneSerpComponent implements OnInit {
     this.loading = true;
 
     this.http
-    .get("http://localhost:" + environment.neuroneSearchPort + "/search/" + query+ "/" + this.currentPage + "/" + this.docsInPage)
+    .get("http://localhost:" + NeuroneConfig.neuroneSearchPort + "/search/" + query+ "/" + this.currentPage + "/" + this.docsInPage)
     .subscribe({
       next: (res: any) => {
 
@@ -331,7 +332,7 @@ export class NeuroneSerpComponent implements OnInit {
         // save route for the downloaded document and add the localhost section
         this.routes = res.result.route;
         for (const key in this.routes) {
-          this.routes[key] = "http://localhost:" + environment.neuroneSearchPort + "//" + this.routes[key];
+          this.routes[key] = "http://localhost:" + NeuroneConfig.neuroneSearchPort + "//" + this.routes[key];
         }
 
         console.log("Documents is now: ", this.documents);
@@ -371,7 +372,7 @@ export class NeuroneSerpComponent implements OnInit {
   logNavigation(logObj: logDocument){
 
     if (this.logEnabled && this.authService.getAuth()) {
-      this.http.post("http://localhost:" + environment.neuroneProfilePort + "/logger/search/", logObj)
+      this.http.post("http://localhost:" + NeuroneConfig.neuroneProfilePort + "/logger/search/", logObj)
       .subscribe({
         next: (res: any) => {
           console.log(res);
@@ -404,7 +405,7 @@ export class NeuroneSerpComponent implements OnInit {
     }
 
     // update bookmark to be saved, if it's a new bookmark it will be created
-    this.http.put("http://localhost:" + environment.neuroneProfilePort + "/search/bookmark/" + this.authService.getUserId() + "/" + this.selectedPageName, bookmarkData)
+    this.http.put("http://localhost:" + NeuroneConfig.neuroneProfilePort + "/search/bookmark/" + this.authService.getUserId() + "/" + this.selectedPageName, bookmarkData)
       .subscribe({
         next: (res) => {
           if (this.bookmarkSaveMode === 'save') {
@@ -421,7 +422,7 @@ export class NeuroneSerpComponent implements OnInit {
 
           // resource not found so we create it
           if (err.status === 404) {
-            this.http.post("http://localhost:" + environment.neuroneProfilePort + "/search/bookmark", bookmarkData)
+            this.http.post("http://localhost:" + NeuroneConfig.neuroneProfilePort + "/search/bookmark", bookmarkData)
               .subscribe({
                 next: (res) => {
                   alert("Bookmark saved!");
@@ -447,7 +448,7 @@ export class NeuroneSerpComponent implements OnInit {
   //test for saved bookmarks of the user get
   getBookmarks() {
 
-    this.http.get("http://localhost:" + environment.neuroneProfilePort + "/search/bookmark/" + this.authService.getUserId())
+    this.http.get("http://localhost:" + NeuroneConfig.neuroneProfilePort + "/search/bookmark/" + this.authService.getUserId())
       .subscribe({
         next: (res: any) => {
           console.log(res);
@@ -495,7 +496,7 @@ export class NeuroneSerpComponent implements OnInit {
     }
 
     console.log("snippetData to send: ", snippetData);
-    this.http.post("http://localhost:" + environment.neuroneProfilePort + "/search/snippet", snippetData)
+    this.http.post("http://localhost:" + NeuroneConfig.neuroneProfilePort + "/search/snippet", snippetData)
       .subscribe({
         next: (res: any) => {
           alert("Snippet saved!");
