@@ -75,11 +75,12 @@ export class AuthService {
     this.http.post<{token: string, expiresIn: number, userId: string, username: string, email: string}>("http://localhost:" + NeuroneConfig.neuroneAuthPort + "/auth/login", authData)
       .subscribe({
         next: response => {
+          console.log("RESPONSE OF LOGIN: ", response);
           const token = response.token;
           this.token = token;
           if (token) {
             const expiresInDuration = response.expiresIn;
-            // we execute this callback after the timeout (recieved in seconds) expires
+            // we execute this callback after the timeout (received in seconds) expires
             this.setAuthTimer(expiresInDuration);
 
             this.isAuthenticated = true;
@@ -107,7 +108,7 @@ export class AuthService {
     this.userId = authInformation.userId;
     const now = new Date();
     const expiresIn = authInformation.expirationDate.getTime() - now.getTime();
-    console.log(authInformation, expiresIn);
+    console.log("Time remaining logged in: " + expiresIn/1000 + " seconds");
     if (expiresIn > 0) {
       this.token = authInformation.token;
       this.username = authInformation.username;
@@ -144,7 +145,6 @@ export class AuthService {
   }
 
   setAuthTimer(duration: number) {
-    console.log("TIMER: " + duration);
     // set auth logout, duration is in seconds
     this.tokenTimer = setTimeout(() => {
       this.logout();
@@ -172,8 +172,8 @@ export class AuthService {
     const expirationDate = localStorage.getItem('expiration');
     const userId = localStorage.getItem('userId');
     const username = localStorage.getItem('username');
-    const email = localStorage.getItem('email');
-    if (!token || !expirationDate || !userId || !username || !email) {
+    const email = localStorage.getItem('email'); // optional so can be empty, reminder that !"" in JS is true
+    if (!token || !expirationDate || !userId || !username || (!email && email !== "")) {
       return;
     }
     return{
