@@ -12,7 +12,8 @@ interface searchDocument {
   indexedBody_t: string,
   url_t: string,
   searchSnippet_t: string[],
-  relevant_b: boolean
+  relevant_b: boolean,
+  tags_t: string[]
 }
 
 // TODO: add task/domain
@@ -49,9 +50,9 @@ export class NeuroneSerpComponent implements OnInit {
   searchOnline = false;
   lastQuery = '';
 
-  // log for neurone-profile
-  @Input() logEnabled = true;
+  @Input() logEnabled = true; // log for neurone-profile
   @Input() refreshIndex = false; // request an index refresh to the search backend when loading the page, useful for dev
+  @Input() tags: string = '';
 
   // pagination
   currentPage = 0;
@@ -310,7 +311,7 @@ export class NeuroneSerpComponent implements OnInit {
     this.loading = true;
 
     this.http
-    .get("http://localhost:" + NeuroneConfig.neuroneSearchPort + "/search/" + query+ "/" + this.currentPage + "/" + this.docsInPage)
+    .get("http://localhost:" + NeuroneConfig.neuroneSearchPort + "/search/" + query+ "/" + this.currentPage + "/" + this.docsInPage + '/' + this.tags)
     .subscribe({
       next: (res: any) => {
 
@@ -489,7 +490,7 @@ export class NeuroneSerpComponent implements OnInit {
 
     const snippetData = {
       userId: this.authService.getUserId(),
-      snippet: snippet, // TODO: snippet field is ok?
+      snippet: snippet,
       website: this.selectedPageName,
       wensiteUrl: websiteUrlToSave,
       date: Date.now()

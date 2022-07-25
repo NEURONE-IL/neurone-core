@@ -7,6 +7,7 @@ module.exports = {
       "PORT": "3005",
       "SECRET_KEY": "placeholder",
       "SALT_ROUNDS": "10",
+      "TOKEN_DURATION ": "7200",
       "DB": "mongodb://127.0.0.1:27017/neurone"
     }
   },

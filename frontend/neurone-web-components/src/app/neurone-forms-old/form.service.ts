@@ -1,4 +1,4 @@
-// TODO: consider removing
+// TODO: deprecated, consider removing
 import { Injectable } from '@angular/core';
 //import { HttpClient } from "@angular/common/http";
 import { NeuroneFormData } from './form-data.model';
