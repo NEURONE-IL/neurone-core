@@ -1,0 +1,12 @@
+.synthesis-form {
+  margin-left: 1rem;
+  min-width: 100px;
+  max-width: 1000px;
+  width: 75%;
+  margin-bottom: 2rem;
+}
+
+.synthesis-title {
+  font-size: large;
+  font-weight: 500;
+}
