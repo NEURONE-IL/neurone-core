@@ -32,6 +32,8 @@ hr {
   color:rgb(240, 60, 60);
   text-align: center;
   font-size: 20px;
+  margin-top: 0px;
+  padding-top: 1rem;
 }
 
 .serp-container {

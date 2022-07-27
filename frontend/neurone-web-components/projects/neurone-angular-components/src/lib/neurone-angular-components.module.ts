@@ -27,6 +27,8 @@ import { createCustomElement } from '@angular/elements';
 import { AuthInterceptor } from './auth-interceptor';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
+import { NeuroneSynthesisComponent } from './neurone-synthesis/neurone-synthesis.component';
+import { NgxWigModule } from 'ngx-wig';
 
 
 @NgModule({
@@ -38,7 +40,8 @@ import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
     KeyboardLogDirective,
     ScrollLogDirective,
     NeuroneSerpComponent,
-    SafePipe
+    SafePipe,
+    NeuroneSynthesisComponent
   ],
   imports: [
     CommonModule,
@@ -56,13 +59,15 @@ import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
     MatPaginatorModule,
     FormsModule,
     ReactiveFormsModule,
-    HttpClientModule
+    HttpClientModule,
+    NgxWigModule
   ],
   exports: [
     NeuroneAngularComponentsComponent,
     NeuroneNavbarComponent,
     NeuroneFormsComponent,
     NeuroneSerpComponent,
+    NeuroneSynthesisComponent,
     MouseLogDirective,
     KeyboardLogDirective,
     ScrollLogDirective,
@@ -80,6 +85,7 @@ export class NeuroneAngularComponentsModule {
       [NeuroneNavbarComponent, "neurone-navbar"],
       [NeuroneFormsComponent, "neurone-forms"],
       [NeuroneSerpComponent, "neurone-serp"],
+      [NeuroneSynthesisComponent, "neurone-synthesis"]
       /*
       [InputComponent, "neurone-forms-input"],
       [ParagraphComponent, "neurone-forms-paragraph"],

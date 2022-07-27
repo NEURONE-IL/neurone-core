@@ -5,6 +5,7 @@ ng add @angular/material
 npm i @angular/elements
 npm i lodash.throttle
 npm i @types/lodash.throttle
+npm install ngx-wig@12.0.0
 npm i neurone-angular-components
 ```
 
@@ -14,6 +15,7 @@ npm i neurone-angular-components
 <neurone-navbar-component>
 <neurone-serp-component>
 <neurone-forms-component>
+<neurone-synthesis-component>
 ```
 
 # Neurone Angular directives

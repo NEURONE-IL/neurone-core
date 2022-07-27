@@ -1,11 +1,11 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, Input, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { AuthService } from 'neurone-angular-components';
-import { NeuroneConfig } from 'projects/neurone-angular-components/src/lib/neurone-components-config';
+import { AuthService } from '../auth.service'
+import { NeuroneConfig } from '../neurone-components-config';
 
 @Component({
-  selector: 'neurone-synthesis',
+  selector: 'neurone-synthesis-component',
   templateUrl: './neurone-synthesis.component.html',
   styleUrls: ['./neurone-synthesis.component.css']
 })

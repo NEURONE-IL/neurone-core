@@ -30,14 +30,11 @@ import { SubmitComponent } from './neurone-forms-old/submit/submit.component';
 */
 
 import { NeuroneAngularComponentsModule } from 'neurone-angular-components';
-import { NeuroneSynthesisComponent } from './neurone-synthesis/neurone-synthesis.component';
-import { NgxWigModule } from 'ngx-wig';
 
 
 @NgModule({
   declarations: [
     AppComponent,
-    NeuroneSynthesisComponent,
     /*
     InputComponent,
     ParagraphComponent,
@@ -64,8 +61,7 @@ import { NgxWigModule } from 'ngx-wig';
     MatNativeDateModule,
     MatIconModule,
     MatPaginatorModule,
-    NeuroneAngularComponentsModule,
-    NgxWigModule
+    NeuroneAngularComponentsModule
   ],
   providers: [
   ],

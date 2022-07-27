@@ -235,7 +235,8 @@ export class NeuroneFormsComponent implements OnChanges, OnInit {
             question: control.name,
             formType: control.type,
             answerArray: answers,
-            title: control.title};
+            title: control.title
+          }
 
           for (let choice of control.choices){
             const controlNameCheckbox = control.name + ' - ' + choice;
