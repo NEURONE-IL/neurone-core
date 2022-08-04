@@ -53,6 +53,7 @@ export class NeuroneSerpComponent implements OnInit {
   @Input() logEnabled = true; // log for neurone-profile
   @Input() refreshIndex = false; // request an index refresh to the search backend when loading the page, useful for dev
   @Input() tags: string = '';
+  @Input() logoImgSrc = 'https://cdn.discordapp.com/attachments/999698056884801618/999698245347446854/searchlogo.png';
 
   // pagination
   currentPage = 0;
@@ -441,21 +442,40 @@ export class NeuroneSerpComponent implements OnInit {
           }
         }
       });
-
-
-
   }
 
-  //test for saved bookmarks of the user get
-  getBookmarks() {
+  /**
+   * get saved bookmarks and snippets
+   * @alert should an alert pop up once data is received
+   */
+  getBookmarks(shouldAlert: boolean) {
 
-    this.http.get("http://localhost:" + NeuroneConfig.neuroneProfilePort + "/search/bookmark/" + this.authService.getUserId())
+    if (!this.authService.getAuth()) {
+      return;
+    }
+
+    this.http.get("http://localhost:" + NeuroneConfig.neuroneProfilePort + "/search/user/" + this.authService.getUserId())
       .subscribe({
         next: (res: any) => {
           console.log(res);
+          if (shouldAlert){
+            let alertString = "Bookmarks:\n";
+            for (const bookmark of res.bookmarks) {
+              alertString = alertString + bookmark.website + "\n\n";
+              console.log(bookmark)
+            }
+            alertString = alertString + "Snippets:\n"
+            for (const snippet of res.snippets) {
+              alertString = alertString + snippet.website + ": " + snippet.snippet + "\n\n";
+              console.log(snippet);
+            }
+
+            alert(alertString);
+          }
         },
           error: (err: any) => {
             console.error(err);
+            alert("Could not get user data.");
           }
       })
   }

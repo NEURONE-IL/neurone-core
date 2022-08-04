@@ -4,14 +4,14 @@
 
 <div *ngIf="mode==='serp'" class="serp-container" #serp>
   <div *ngIf="!fullScreenMode" class="search-small">
-    <img src="https://cdn.discordapp.com/attachments/999698056884801618/999698245347446854/searchlogo.png" alt="neurone logo" (click)="fullScreenMode=true" class="search-logo-pointer">
+    <img [src]="logoImgSrc" alt="neurone logo" (click)="fullScreenMode=true" class="search-logo-pointer">
     <div class="search-small-input">
       <input id="neurone-input-small" [formControl]="searchForm" (keydown.enter)="onSeachRequest()">
       <button mat-raised-button color="primary" style="border-radius: 10px" type="button" (click)="onSeachRequest()">Search</button>
     </div>
   </div>
   <div *ngIf="fullScreenMode" class="search-big">
-    <img src="https://cdn.discordapp.com/attachments/999698056884801618/999698245347446854/searchlogo.png" alt="neurone logo">
+    <img [src]="logoImgSrc" alt="neurone logo">
     <div class="search-big-input">
       <div class="search-big-input-box">
         <input id="neurone-input-big" [formControl]="searchForm" (keydown.enter)="onSeachRequest()">
@@ -49,7 +49,7 @@
   <mat-toolbar style="min-height:10px" color="primary">
     <button mat-raised-button (click)="switchToSerpMode()">Return to Search Results</button>
     <span class="spacer"></span>
-    <button mat-raised-button (click)="getBookmarks()">Get User Data (for tests)</button>
+    <button *ngIf="showUserSaveButtons" style="margin-left: 1rem" mat-raised-button (click)="getBookmarks(true)">Get and show user data</button>
     <button *ngIf="showUserSaveButtons" style="margin-left: 1rem" mat-raised-button (click)="sendSnippetRequest(neuronePage)">Save Snippet</button>
     <button *ngIf="showUserSaveButtons" style="margin-left: 1rem" mat-raised-button (click)="saveBookmark()">{{bookmarkSaveMode === 'save' ? 'Save Bookmark' : 'Unsave Bookmark'}}</button>
   </mat-toolbar>
