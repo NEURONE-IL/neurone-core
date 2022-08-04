@@ -1,3 +1,6 @@
+// configuration file to be used with PM2
+// pm2 start <name of file>
+// https://pm2.keymetrics.io/docs/usage/application-declaration/ for more
 module.exports = {
   apps : [
   {
@@ -27,7 +30,7 @@ module.exports = {
       "PORT":"3001",
       "DB": "mongodb://127.0.0.1:27017/neurone",
       "NEURONE_ASSET_PATH": "./assets",
-      "NEURONE_IFUCO_SORT_DISABLE": "true",
+      "ENABLE_CUSTOM_AD_SORT": "true",
       "NEURONE_SEARCH_ENGINE": "solr",
 
       "NEURONE_SOLR_HOST": "localhost",

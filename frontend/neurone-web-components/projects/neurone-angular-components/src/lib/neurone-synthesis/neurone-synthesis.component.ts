@@ -13,7 +13,7 @@ export class NeuroneSynthesisComponent implements OnInit {
 
   @Input() question = "This is the Synthesis component! Please enter text here.";
   @Input() placeholder = "I think that...";
-  @Input() autosaveInterval = 20; // timer for auto saving the answer
+  @Input() autosaveInterval = 30; // timer for auto saving the answer
 
   startTime: number = 0; // date when the component was loaded
   synthForm = new FormControl('');
