@@ -1,6 +1,7 @@
 /*
  * Public API Surface of neurone-angular-components
  */
+import '@angular/localize/init';
 
 export * from './lib/auth.service';
 export * from './lib/neurone-angular-components.component';

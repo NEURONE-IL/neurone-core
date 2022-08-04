@@ -1,5 +1,5 @@
 <div class="synthesis-form">
-  <p class="synthesis-title">{{question}}</p>
+  <p class="synthesis-title" i18n>{{question}}</p>
   <!--TODO: h1 h2 h3 custom button-->
   <ngx-wig buttons=" bold, italic, underline, list1, list2" (contentChange)="countWords($event)" [formControl]="synthForm" [placeholder]="placeholder"></ngx-wig>
   <p>You have written {{ wordCount }} word(s).</p>

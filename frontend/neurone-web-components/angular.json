@@ -4,6 +4,10 @@
   "newProjectRoot": "projects",
   "projects": {
     "neurone-web-components": {
+      "i18n": {
+        "sourceLocale": "en-US",
+        "locales": {"es-CL": "src/locale/messages.es.xlf"}
+      },
       "projectType": "application",
       "schematics": {
         "@schematics/angular:application": {
@@ -17,6 +21,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
+            "localize": ["es-CL"],
             "outputPath": "dist/neurone-web-components",
             "index": "src/index.html",
             "main": "src/main.ts",
