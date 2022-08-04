@@ -1,19 +1,24 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { AuthService } from '../auth.service'
 import { NeuroneConfig } from '../neurone-components-config';
+import { interval, Subscription } from 'rxjs';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'neurone-synthesis-component',
   templateUrl: './neurone-synthesis.component.html',
   styleUrls: ['./neurone-synthesis.component.css']
 })
-export class NeuroneSynthesisComponent implements OnInit {
+export class NeuroneSynthesisComponent implements OnInit, OnDestroy {
 
   @Input() question = "This is the Synthesis component! Please enter text here.";
   @Input() placeholder = "I think that...";
-  @Input() autosaveInterval = 30; // timer for auto saving the answer
+  @Input() autosaveInterval = 30; // timer for auto saving the answer in seconds
+  @Input() autosaveDisabled = false;
+
+  subscription: Subscription = new Subscription;
 
   startTime: number = 0; // date when the component was loaded
   synthForm = new FormControl('');
@@ -21,10 +26,14 @@ export class NeuroneSynthesisComponent implements OnInit {
   charCount = 0;
   loading = false;
 
-  constructor(private authService: AuthService, private http: HttpClient) { }
+  constructor(private authService: AuthService, private http: HttpClient, private _snackBar: MatSnackBar) { }
 
   ngOnInit(): void {
     this.startTime = Date.now();
+
+    // autosave setup every few seconds
+    const source = interval(this.autosaveInterval * 1000);
+    this.subscription = source.subscribe((_) => this.submitAnswer(true));
   }
 
   testInput() {
@@ -50,12 +59,12 @@ export class NeuroneSynthesisComponent implements OnInit {
     this.charCount = reducedText.length;  // dgacitua: Count chars
   }
 
-  // TODO: auto save after certain ammount of time
-  autoSave() {
-    console.log("TODO");
-  }
 
-  submitAnswer() {
+  submitAnswer(autoSaved: boolean) {
+
+    if (this.autosaveDisabled && autoSaved) {
+      return;
+    }
 
     const answer = {
       userId: this.authService.getUserId(),
@@ -64,8 +73,8 @@ export class NeuroneSynthesisComponent implements OnInit {
       question: this.question,
       answer: this.removeHTML(this.synthForm.value),
       answerHTML: this.synthForm.value,
-      completeAnswer: true,
-      clientDate: Date.now()
+      completeAnswer: !autoSaved,
+      clientDate: Date.now(),
     }
 
     this.loading = true;
@@ -74,6 +83,13 @@ export class NeuroneSynthesisComponent implements OnInit {
         next: response => {
           console.log(response);
           this.loading = false;
+
+          if (autoSaved){
+            this._snackBar.open('Answer auto saved!', 'Close', {
+              duration: 3000
+            });
+          }
+
         },
         error: error => {
           console.error(error);
@@ -81,6 +97,10 @@ export class NeuroneSynthesisComponent implements OnInit {
         }
       });
 
+  }
+
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
   }
 
 }

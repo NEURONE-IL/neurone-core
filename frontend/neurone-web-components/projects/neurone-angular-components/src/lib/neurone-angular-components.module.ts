@@ -22,6 +22,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSelectModule } from '@angular/material/select';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 import { createCustomElement } from '@angular/elements';
 import { AuthInterceptor } from './auth-interceptor';
@@ -57,6 +58,7 @@ import { NgxWigModule } from 'ngx-wig';
     MatNativeDateModule,
     MatIconModule,
     MatPaginatorModule,
+    MatSnackBarModule,
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,

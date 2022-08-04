@@ -3,7 +3,8 @@
   <!--TODO: h1 h2 h3 custom button-->
   <ngx-wig buttons=" bold, italic, underline, list1, list2" (contentChange)="countWords($event)" [formControl]="synthForm" [placeholder]="placeholder"></ngx-wig>
   <p>You have written {{ wordCount }} word(s).</p>
-  <button mat-raised-button color="primary" (click)="submitAnswer()">Submit</button>
+  <p *ngIf="!autosaveDisabled">Autosaving every {{ autosaveInterval }} seconds.</p>
+  <button mat-raised-button color="primary" (click)="submitAnswer(false)">Submit</button>
   <div *ngIf="loading">
     <mat-spinner></mat-spinner>
   </div>
