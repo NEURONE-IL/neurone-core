@@ -1,10 +1,15 @@
 <div class="synthesis-form">
-  <p class="synthesis-title" i18n>{{question}}</p>
+  <p class="synthesis-title">{{question}}</p>
+  <mat-card *ngIf="snippets.length!==0">
+    <mat-card-title>Saved snippets from searched websites</mat-card-title>
+    <mat-card-content *ngFor="let item of snippets"><b>{{item.websiteTitle}}:</b> {{item.snippet}}</mat-card-content>
+  </mat-card>
   <!--TODO: h1 h2 h3 custom button-->
   <ngx-wig buttons=" bold, italic, underline, list1, list2" (contentChange)="countWords($event)" [formControl]="synthForm" [placeholder]="placeholder"></ngx-wig>
   <p>You have written {{ wordCount }} word(s).</p>
   <p *ngIf="!autosaveDisabled">Autosaving every {{ autosaveInterval }} seconds.</p>
   <button mat-raised-button color="primary" (click)="submitAnswer(false)">Submit</button>
+  <mat-error *ngIf="!userIsAuthenticated">Please login first.</mat-error>
   <div *ngIf="loading">
     <mat-spinner></mat-spinner>
   </div>

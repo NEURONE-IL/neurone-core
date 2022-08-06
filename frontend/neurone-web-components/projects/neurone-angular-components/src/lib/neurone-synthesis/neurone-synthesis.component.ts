@@ -6,6 +6,18 @@ import { NeuroneConfig } from '../neurone-components-config';
 import { interval, Subscription } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
+interface snippetResponse {
+  snippet: string,
+  dateClient: string,
+  dateServer: string,
+  timestampClient: number,
+  timestampServer: number,
+  userId: string,
+  website: string,
+  websiteUrl: string,
+  websiteTitle: string
+}
+
 @Component({
   selector: 'neurone-synthesis-component',
   templateUrl: './neurone-synthesis.component.html',
@@ -18,13 +30,20 @@ export class NeuroneSynthesisComponent implements OnInit, OnDestroy {
   @Input() autosaveInterval = 30; // timer for auto saving the answer in seconds
   @Input() autosaveDisabled = false;
 
-  subscription: Subscription = new Subscription;
+  intervalSubs: Subscription = new Subscription; // for the autosave
 
   startTime: number = 0; // date when the component was loaded
   synthForm = new FormControl('');
   wordCount = 0;
   charCount = 0;
   loading = false;
+  startedAns = false; // false if the user hasn't started writing an asnwer
+
+  // search snippet data
+  snippets: snippetResponse[] = [];
+
+  userIsAuthenticated = false;
+  private authStatusSubs: Subscription = new Subscription;
 
   constructor(private authService: AuthService, private http: HttpClient, private _snackBar: MatSnackBar) { }
 
@@ -33,7 +52,19 @@ export class NeuroneSynthesisComponent implements OnInit, OnDestroy {
 
     // autosave setup every few seconds
     const source = interval(this.autosaveInterval * 1000);
-    this.subscription = source.subscribe((_) => this.submitAnswer(true));
+    this.intervalSubs = source.subscribe((_) => this.submitAnswer(true));
+
+    // listen for login status from the neurone auth service
+    this.authStatusSubs = this.authService
+      .getAuthStatusListener()
+      .subscribe( isAuthenticated => {
+        this.userIsAuthenticated = isAuthenticated;
+      });
+    // initial auth status
+    this.userIsAuthenticated = this.authService.getAuth();
+
+      // get search snippets
+      this.getSnippets();
   }
 
   testInput() {
@@ -60,9 +91,31 @@ export class NeuroneSynthesisComponent implements OnInit, OnDestroy {
   }
 
 
+  getSnippets() {
+    this.http.get("http://localhost:" + NeuroneConfig.neuroneProfilePort + "/search/snippet/" + this.authService.getUserId())
+      .subscribe({
+        next: (response: any) => {
+          this.snippets = response.snippets;
+          console.log(this.snippets);
+        },
+        error: error => {
+          console.error(error);
+        }
+      });
+  }
+
+
   submitAnswer(autoSaved: boolean) {
 
-    if (this.autosaveDisabled && autoSaved) {
+    if (this.autosaveDisabled && autoSaved || !this.authService.getAuth()) {
+      return;
+    }
+
+    // if the user hasn't started writing, don't submit or autosave
+    if (!this.startedAns && this.charCount > 0) {
+      this.startedAns = true;
+    }
+    else if (!this.startedAns) {
       return;
     }
 
@@ -100,7 +153,8 @@ export class NeuroneSynthesisComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.subscription.unsubscribe();
+    this.intervalSubs.unsubscribe();
+    this.authStatusSubs.unsubscribe();
   }
 
 }

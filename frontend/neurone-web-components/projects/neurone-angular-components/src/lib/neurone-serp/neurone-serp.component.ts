@@ -508,11 +508,15 @@ export class NeuroneSerpComponent implements OnInit {
     // find the url using the selected doc name
     const websiteUrlToSave = this.documents.find(elem => elem.id === this.selectedPageName)?.url_t;
 
+    // find the website title
+    const websiteTitleToSave = this.documents.find(elem => elem.id === this.selectedPageName)?.title_t;
+
     const snippetData = {
       userId: this.authService.getUserId(),
       snippet: snippet,
       website: this.selectedPageName,
-      wensiteUrl: websiteUrlToSave,
+      websiteUrl: websiteUrlToSave,
+      websiteTitle: websiteTitleToSave,
       date: Date.now()
     }
 

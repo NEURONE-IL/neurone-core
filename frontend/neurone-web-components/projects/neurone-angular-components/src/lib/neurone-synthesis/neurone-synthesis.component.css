@@ -2,11 +2,21 @@
   margin-left: 1rem;
   min-width: 100px;
   max-width: 1000px;
-  width: 75%;
+  width: 90%;
   margin-bottom: 2rem;
 }
 
 .synthesis-title {
   font-size: large;
   font-weight: 500;
+}
+
+.mat-card:not([class*=mat-elevation-z]) {
+  box-shadow: 0 1px 1px -1px rgba(0,0,0,1),
+              0 1px 1px 0 rgba(0,0,0,1),
+              0 1px 3px 0 rgba(0,0,0,1);
+}
+
+mat-card {
+  margin-bottom: 2rem;
 }
