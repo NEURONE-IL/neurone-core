@@ -1,9 +1,9 @@
 import { Directive, HostListener } from '@angular/core';
 
 @Directive({
-  selector: '[neuroneRestrictInput]'
+  selector: '[neurone-input-restricter]'
 })
-export class NeuroneRestrictInputDirective {
+export class NeuroneInputLimiter {
 
   // prevent right click menu
   @HostListener('contextmenu', ['$event'])

@@ -14,3 +14,4 @@ export * from './lib/neurone-synthesis/neurone-synthesis.component';
 export * from './lib/neurone-logger/keyboard.directive';
 export * from './lib/neurone-logger/mouse.directive';
 export * from './lib/neurone-logger/scroll.directive';
+export * from './lib/neurone-input-limiter.directive';

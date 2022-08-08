@@ -30,13 +30,11 @@ import { SubmitComponent } from './neurone-forms-old/submit/submit.component';
 */
 
 import { NeuroneAngularComponentsModule } from 'neurone-angular-components';
-import { NeuroneRestrictInputDirective } from './neurone-restrict-input.directive';
 
 
 @NgModule({
   declarations: [
     AppComponent,
-    NeuroneRestrictInputDirective,
     /*
     InputComponent,
     ParagraphComponent,

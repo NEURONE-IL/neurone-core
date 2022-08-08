@@ -3,7 +3,9 @@ import { NeuroneAngularComponentsComponent, SafePipe } from './neurone-angular-c
 import { NeuroneNavbarComponent } from './neurone-navbar/neurone-navbar.component';
 import { NeuroneFormsComponent } from './neurone-forms/neurone-forms.component';
 import { NeuroneSerpComponent } from './neurone-serp/neurone-serp.component';
+import { NeuroneSynthesisComponent } from './neurone-synthesis/neurone-synthesis.component';
 import { MouseLogDirective } from './neurone-logger/mouse.directive';
+import { NeuroneInputLimiter } from './neurone-input-limiter.directive';
 import { KeyboardLogDirective } from './neurone-logger/keyboard.directive';
 import { ScrollLogDirective } from './neurone-logger/scroll.directive';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -28,7 +30,6 @@ import { createCustomElement } from '@angular/elements';
 import { AuthInterceptor } from './auth-interceptor';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
-import { NeuroneSynthesisComponent } from './neurone-synthesis/neurone-synthesis.component';
 import { NgxWigModule } from 'ngx-wig';
 
 
@@ -40,9 +41,11 @@ import { NgxWigModule } from 'ngx-wig';
     MouseLogDirective,
     KeyboardLogDirective,
     ScrollLogDirective,
+    NeuroneInputLimiter,
     NeuroneSerpComponent,
     SafePipe,
-    NeuroneSynthesisComponent
+    NeuroneSynthesisComponent,
+
   ],
   imports: [
     CommonModule,
@@ -73,6 +76,7 @@ import { NgxWigModule } from 'ngx-wig';
     MouseLogDirective,
     KeyboardLogDirective,
     ScrollLogDirective,
+    NeuroneInputLimiter
   ],
   providers: [
     HttpClientModule,
