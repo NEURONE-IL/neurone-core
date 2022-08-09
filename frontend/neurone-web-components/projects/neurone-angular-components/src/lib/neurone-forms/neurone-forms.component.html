@@ -1,20 +1,23 @@
 <!--todo: if there isn't any valid control make this dissapear with a *ngIf-->
 <form [formGroup]="form" (ngSubmit)="onSubmitAnswers()">
 
-  <div *ngFor="let control of jsonFormData?.controls">
-    <mat-form-field class="neurone-form" *ngIf="['input', 'paragraph', 'datepicker'].includes(control.type)">
-      <mat-label>{{control.title}}</mat-label>
+  <div *ngFor="let control of jsonFormData?.questions">
+    <p *ngIf="['input', 'paragraph', 'datepicker'].includes(control.type)" class="title">{{ control.title }}</p>
+    <mat-form-field class="neurone-form" *ngIf="['input', 'paragraph', 'datepicker'].includes(control.type)" [appearance]="formAppearance">
+      <mat-label>{{control.validators.minLength ? 'Minimum characters: ' + control.validators.minLength + '. ': ''}}</mat-label>
+      <mat-label>{{control.validators.maxLength ? 'Maximum characters: ' + control.validators.maxLength + '. ' : ''}}</mat-label>
       <input
         *ngIf="control.type==='input'"
         [type]="control.type"
         [formControlName]="control.name"
-        [value]="control.value"
+        [value]="control.placeholder"
         matInput>
       <textarea
         *ngIf="control.type==='paragraph'"
         [type]="control.type"
         [formControlName]="control.name"
-        [value]="control.value"
+        [value]="control.placeholder"
+        [rows]="control.rows ? control.rows : 2"
         matInput >
       </textarea>
       <div *ngIf="control.type==='datepicker'">
@@ -23,7 +26,10 @@
         <mat-datepicker #picker></mat-datepicker>
       </div>
 
-      <mat-hint>{{ control.hint }}</mat-hint>
+      <mat-hint>{{control.hint}} </mat-hint>
+      <mat-error *ngIf="control.validators.minLength">Please enter at least {{ control.validators.minLength }} characters.</mat-error>
+      <mat-error *ngIf="control.validators.maxLength">Please enter at most {{ control.validators.maxLength }} characters.</mat-error>
+
     </mat-form-field>
 
     <div class="neurone-form" *ngIf="control.type==='checkbox'">
@@ -32,7 +38,7 @@
       <section *ngFor="let option of control.choices; index as i">
         <mat-checkbox
 
-          [value]="control.value"
+          [value]="control.placeholder ? control.placeholder : ''"
           [formControlName]="control.choices ? (control.name + ' - ' + control.choices[i]) : control.name"
           >{{ option }}</mat-checkbox>
       </section>
@@ -57,7 +63,7 @@
 
     <div class="neurone-form" *ngIf="control.type==='dropdown'">
       <h4>{{ control.title }}</h4>
-      <mat-form-field>
+      <mat-form-field [appearance]="formAppearance">
         <mat-label>{{control.hint}}</mat-label>
         <mat-select [formControlName]="control.name">
           <div *ngFor="let choice of control.choices; index as i">
@@ -72,7 +78,6 @@
     <div class="neurone-form" *ngIf="control.type==='scale'">
       <label><b>{{ control.title + (control.validators.required ? "*" : "") }}</b></label>
       <p class="hint" *ngIf="control.hint!=''">{{control.hint}}</p>
-      <mat-error *ngIf="submitAttempted && !form.valid && control.validators.required">Required</mat-error>
       <mat-radio-group
         aria-label="Select an option"
         [formControlName]="control.name">
@@ -90,6 +95,7 @@
           </tr>
         </table>
       </mat-radio-group>
+      <mat-error *ngIf="submitAttempted && !form.valid && control.validators.required">This is <strong>required</strong>.</mat-error>
     </div>
 
 
@@ -114,21 +120,21 @@
     <button mat-raised-button color="primary" type="submit">Submit</button>
     <mat-spinner *ngIf="isLoading"></mat-spinner>
     <mat-error *ngIf="submitError">Error sumbitting. Please contact the administrator of the questionnaire.</mat-error>
-    <mat-error style="padding-top: 1rem;" *ngIf="loadFormError">Failed to find form named "{{ formName }}". Are you authenticated?</mat-error>
+    <mat-error style="margin-top: 1rem; margin-left: 1rem;" *ngIf="loadFormError">Failed to find form named "{{ formName }}". Are you authenticated?</mat-error>
   </div>
 
-  <div class="submit-button" *ngIf="mode==='creator'">
+  <div class="submit-button" *ngIf="mode==='dev'">
     <button mat-raised-button color="warn" type="button" (click)="onSubmitForm()">Save form in databse</button>
     <mat-spinner *ngIf="isLoading"></mat-spinner>
     <p style="color:blue">{{ saveButtonText }}</p>
   </div>
 
-  <div class="submit-button" *ngIf="mode==='creator'">
+  <div class="submit-button" *ngIf="mode==='dev'">
     <button mat-raised-button color="warn" type="button" (click)="onDeleteForm()">Delete form in databse</button>
     <mat-spinner *ngIf="isLoading"></mat-spinner>
     <p style="color:red">{{ deleteButtonText }}</p>
     <mat-error *ngIf="deleteFormError">Failed to delete form "{{ formName }}" from database.</mat-error>
   </div>
-
+  <mat-error *ngIf="!userIsAuthenticated" class="title">Please login to submit form.</mat-error>
 
 </form>

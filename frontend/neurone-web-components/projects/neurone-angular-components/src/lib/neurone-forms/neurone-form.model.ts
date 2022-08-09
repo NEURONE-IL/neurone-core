@@ -19,11 +19,11 @@ export interface JsonScaleControls {
 }
 
 export interface JsonFormControls {
-  title: string;
-  hint: string;
-  name: string;
-  value: string;
-  placeholder?: string;
+  title: string; // main question / query
+  hint: string; // small text below the input
+  name: string; // internal ID
+  placeholder?: string; // // placeholder answer
+  rows?: number; // number of rows (textarea only)
   type: string;
   stars: number;
   choices?: string[];
@@ -33,5 +33,5 @@ export interface JsonFormControls {
 
 export interface JsonFormData {
   formName: string;
-  controls: JsonFormControls[];
+  questions: JsonFormControls[];
 }

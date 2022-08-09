@@ -1,26 +1,27 @@
 {
   "formName": "example_file",
-  "controls": [
+  "questions": [
     {
       "title": "Example Title",
       "hint": "Example Hint",
       "name": "inputExample",
-      "value": "",
       "type": "input",
       "validators": {
         "required": true,
-        "minLength": 10
+        "minLength": 10,
+        "maxLength": 20
       }
     },
     {
       "title": "Example Title",
       "hint": "Example Hint",
       "name": "paraExample",
-      "value": "",
+      "placeholder": "This is a placeholder.",
+      "rows": "4",
       "type": "paragraph",
       "validators": {
         "required": false,
-        "minLength": 1
+        "minLength": 2
       }
     },
     {
@@ -60,7 +61,7 @@
       "type": "datepicker",
       "choices": ["Example 1", "Example 2", "Example 3"],
       "validators": {
-        "required": true
+        "required": false
       }
     },
     {

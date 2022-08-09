@@ -1,5 +1,5 @@
 .neurone-form {
-  width: 80%;
+  width: 90%;
   margin-left: 1rem;
   margin-top: 1rem;
   margin-right: 1rem;
@@ -9,6 +9,7 @@
 .title {
   margin-left: 1rem;
   margin-bottom: 0rem;
+  font-weight: 700;
 }
 
 .submit-button {

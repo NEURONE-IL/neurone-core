@@ -1,10 +1,11 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { JsonFormData, JsonFormControls } from './neurone-form.model';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { AuthService } from '../auth.service';
 import { Subscription } from 'rxjs';
 import { NeuroneConfig } from '../neurone-components-config';
+import { MatFormFieldAppearance } from '@angular/material/form-field';
 
 
 @Component({
@@ -12,11 +13,31 @@ import { NeuroneConfig } from '../neurone-components-config';
   templateUrl: './neurone-forms.component.html',
   styleUrls: ['./neurone-forms.component.css']
 })
-export class NeuroneFormsComponent implements OnChanges, OnInit {
+export class NeuroneFormsComponent implements OnInit {
 
+  /**
+   * Name of the form, in local modes a path, in db mode it's formName field in the database
+   *
+   * Example of local name in the default Angular assets folder: `assets/example-form.json`
+   *
+   * If Neurone-Profile doesn't find the form (in db mode), it will return an example form
+  */
   @Input('form') formName = "";
-  @Input() mode: "creator" | "answer" = "answer"; // creator to enable saving/deleting the form in the database, answer to simply answer the form
-  jsonFormData: JsonFormData = { formName: "plalceholder", controls: [] }
+  /**
+   * dev: load form locally, enable buttons to save/delete on db
+   *
+   * local: load form locally
+   *
+   * db: load form from database using the formName field as an ID
+   *  */
+  @Input() mode: "dev" | "local" | "db" = "db";
+  /** Customizable material appearance
+   *
+   * `MatFormFieldAppearance = "legacy" | "standard" | "fill" | "outline"`
+  */
+  @Input('appearance') formAppearance: MatFormFieldAppearance = 'outline';
+
+  jsonFormData: JsonFormData = { formName: "plalceholder", questions: [] }
 
   form: FormGroup = this.formBuilder.group({});
   submitAttempted = false;
@@ -27,7 +48,7 @@ export class NeuroneFormsComponent implements OnChanges, OnInit {
   saveButtonText = "";
   deleteButtonText = "";
 
-  private authListenerSubs: Subscription | undefined;
+  private authListenerSubs: Subscription = new Subscription;
   userIsAuthenticated = false;
 
   constructor(private authService: AuthService, private http: HttpClient, private formBuilder: FormBuilder) { }
@@ -38,11 +59,11 @@ export class NeuroneFormsComponent implements OnChanges, OnInit {
       this.loadForm(this.formName);
     }
     // load default example file if there isn't an input
-    else if (this.formName === "" && this.mode === "creator"){
+    else if (this.formName === "" && this.mode === "dev"){
       this.formName = "assets/example-form.json";
       this.loadForm(this.formName);
     }
-    else if (this.formName === "" && this.mode === "answer"){
+    else if (this.formName === "" && this.mode === "db"){
       this.formName = "questionnaire_example";
       this.loadForm(this.formName);
     }
@@ -62,25 +83,23 @@ export class NeuroneFormsComponent implements OnChanges, OnInit {
       });
   }
 
-  ngOnChanges(changes: SimpleChanges) {
-
-    //console.log("Form data has changed\n");
-
-
-  }
-
+  /**
+   * retriever of the form JSON file
+   * @param formName name of the form in the database, or the path of the form locally
+   */
   loadForm(formName: string) {
-    if (this.mode === "answer"){
+    if (this.mode === "db"){
       this.http
       .get("http://localhost:" + NeuroneConfig.neuroneProfilePort + "/form/" + formName)
       .subscribe({
         next: (value: any) => {
+
           this.jsonFormData = value.form;
           /*
           console.log("JSON LOADED:\n");
           console.log(this.jsonFormData);
           */
-          this.createForm(this.jsonFormData.controls);
+          this.createForm(this.jsonFormData.questions);
         },
         error: (error: any) => {
           this.loadFormError = true;
@@ -88,7 +107,7 @@ export class NeuroneFormsComponent implements OnChanges, OnInit {
         }
       });
     }
-    else if (this.mode === "creator") {
+    else if (this.mode === "dev" || this.mode === "local") {
       // TODO: loading the local file doesn't work in the web component
       this.http
       .get(formName)
@@ -100,7 +119,7 @@ export class NeuroneFormsComponent implements OnChanges, OnInit {
           console.log(this.jsonFormData);
           */
           this.loadFormError = false;
-          this.createForm(this.jsonFormData.controls);
+          this.createForm(this.jsonFormData.questions);
         },
         error: (error) => {
           this.loadFormError = true;
@@ -110,9 +129,14 @@ export class NeuroneFormsComponent implements OnChanges, OnInit {
     }
   }
 
-  createForm(controls: JsonFormControls[]){
+  /**
+   * function in charge of creating the main form
+   * @param questions all the form questions
+   */
+  createForm(questions: JsonFormControls[]){
     console.log("Creating form " + this.jsonFormData.formName + "...");
-    for (const control of controls) {
+
+    for (const control of questions) {
 
       const validatorsToAdd = [];
       // loop through the validators array for this form to save them and add them to the form itself later
@@ -165,22 +189,27 @@ export class NeuroneFormsComponent implements OnChanges, OnInit {
           this.form.addControl(control.name + ' - ' + choice, this.formBuilder.control(false, validatorsToAdd));
         }
       } else {
-        this.form.addControl(control.name, this.formBuilder.control(control.value, validatorsToAdd));
+        this.form.addControl(control.name, this.formBuilder.control(control.placeholder, validatorsToAdd));
       }
 
     }
-    console.log("Final form:");
-    console.log(this.form);
   }
 
-
-  // for the rating form
+  /**
+   * saves the rating in the form when a star of the star rating type of question is clicked
+   * @param rating what start position was clicked
+   * @param controlName name of the question
+   */
   onStarClick(rating: number, controlName: string) {
     this.form.controls[controlName].patchValue(rating);
-    return;
   }
 
-  // for the rating form
+  /**
+   * helper to indicate what type of star to show in the question type of star rating
+   * @param index the position of the start in the list of stars
+   * @param controlName name of the question
+   * @returns string indicating the type of star to show
+   */
   showStar(index:number, controlName: string) {
 
     if (this.form.controls[controlName].value >= index + 1) {
@@ -191,6 +220,9 @@ export class NeuroneFormsComponent implements OnChanges, OnInit {
 
   }
 
+  /**
+   * answer submission to Neurone-Profile
+   */
   onSubmitAnswers() {
     this.isLoading = true;
 
@@ -215,10 +247,9 @@ export class NeuroneFormsComponent implements OnChanges, OnInit {
     const formId = this.jsonFormData.formName;
 
     let formData = { questions: questions, clientDate: clientDate, userId: userId, formId: formId };
-    console.log(formData);
 
     // get all questions/forms and add them to the questions array in a fashion compatible with backend
-    for (let control of this.jsonFormData.controls){
+    for (let control of this.jsonFormData.questions){
       if (control.type != 'checkbox') {
         const controlName = control.name;
         const formQuestion = {
@@ -250,8 +281,6 @@ export class NeuroneFormsComponent implements OnChanges, OnInit {
       }
     }
 
-    console.log(formData);
-
     this.http.post("http://localhost:" + NeuroneConfig.neuroneProfilePort + "/profile/form", formData)
       .subscribe({
         next: response => {
@@ -267,13 +296,16 @@ export class NeuroneFormsComponent implements OnChanges, OnInit {
       });
   }
 
+  /**
+   * form submission (not answers) to Neurone-Profile
+   */
   onSubmitForm() {
 
     // send the current questionnaire to the backend
     const formDataQuestionnaire = {
       formName: this.jsonFormData.formName,
       username: this.authService.getUsername(),
-      questions: this.jsonFormData.controls
+      questions: this.jsonFormData.questions
     }
 
     this.http.put("http://localhost:" + NeuroneConfig.neuroneProfilePort + "/form/" + formDataQuestionnaire.formName, formDataQuestionnaire)
@@ -291,6 +323,9 @@ export class NeuroneFormsComponent implements OnChanges, OnInit {
     return;
   }
 
+  /**
+   * form deletion (not answers)
+   */
   onDeleteForm() {
     this.http.delete("http://localhost:" + NeuroneConfig.neuroneProfilePort + "/form/" + this.jsonFormData.formName)
       .subscribe({
@@ -305,6 +340,13 @@ export class NeuroneFormsComponent implements OnChanges, OnInit {
       });
   }
 
+  /**
+   * helper function to properly calculate the numbers that are in the scale type of question
+   * @param min start of scale
+   * @param max end of scale
+   * @param step difference between each scale number
+   * @returns the number array with all the numbers of the scale
+   */
   getRange(min: number, max: number, step: number) {
 
     let finalArray: number[] = []
