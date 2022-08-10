@@ -1,4 +1,4 @@
-import { Injector, NgModule } from '@angular/core';
+import { Injector, Input, NgModule } from '@angular/core';
 import { NeuroneAngularComponentsComponent, SafePipe } from './neurone-angular-components.component';
 import { NeuroneNavbarComponent } from './neurone-navbar/neurone-navbar.component';
 import { NeuroneFormsComponent } from './neurone-forms/neurone-forms.component';
@@ -25,13 +25,15 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
+import { MomentDateAdapter } from '@angular/material-moment-adapter';
+import { CUSTOM_DATE_FORMATS } from './neurone-forms/custom-date-format';
 
 import { createCustomElement } from '@angular/elements';
 import { AuthInterceptor } from './auth-interceptor';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
 import { NgxWigModule } from 'ngx-wig';
-
 
 @NgModule({
   declarations: [
@@ -81,7 +83,9 @@ import { NgxWigModule } from 'ngx-wig';
   providers: [
     HttpClientModule,
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true},
-    { provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: {appearance: "outline"} }
+    { provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: {appearance: "outline"} },
+    { provide: DateAdapter, useClass: MomentDateAdapter, deps: [MAT_DATE_LOCALE] },
+    { provide: MAT_DATE_FORMATS, useValue: CUSTOM_DATE_FORMATS }
   ]
 })
 export class NeuroneAngularComponentsModule {

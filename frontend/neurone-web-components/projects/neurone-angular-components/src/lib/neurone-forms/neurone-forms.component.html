@@ -21,7 +21,11 @@
         matInput >
       </textarea>
       <div *ngIf="control.type==='datepicker'">
-        <input matInput [matDatepicker]="picker" [formControlName]="control.name">
+        <input
+          matInput
+          [matDatepicker]="picker"
+          [formControlName]="control.name"
+        >
         <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
         <mat-datepicker #picker></mat-datepicker>
       </div>
