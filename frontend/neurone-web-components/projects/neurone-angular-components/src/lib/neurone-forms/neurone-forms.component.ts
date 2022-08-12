@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import { JsonFormData, JsonFormControls } from './neurone-form.model';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { AuthService } from '../auth.service';
@@ -36,6 +36,11 @@ export class NeuroneFormsComponent implements OnInit {
    * `MatFormFieldAppearance = "legacy" | "standard" | "fill" | "outline"`
   */
   @Input('appearance') formAppearance: MatFormFieldAppearance = 'outline';
+
+  /**
+   * Will send a "true" once the user has submitted an answer and the backend has responded with no errors
+   */
+  @Output() userHasSubmitted = new EventEmitter<boolean>();
 
   jsonFormData: JsonFormData = { formName: "plalceholder", questions: [] }
 
@@ -185,7 +190,7 @@ export class NeuroneFormsComponent implements OnInit {
         }
       }
 
-      console.log("Adding: " + control.name + " Type: " + control.type);
+      //console.log("Adding: " + control.name + " Type: " + control.type);
       if (control.type === "checkbox" && control.choices){
         // todo: do required validators make sense in checkbox forms?
         for (const choice of control.choices){
@@ -290,6 +295,8 @@ export class NeuroneFormsComponent implements OnInit {
           this.isLoading = false;
           this.submitError = false;
           console.log(response);
+          // tell the parent that user has submitted an answer
+          this.userHasSubmitted.emit(true);
         },
         error: error => {
           this.isLoading = false;

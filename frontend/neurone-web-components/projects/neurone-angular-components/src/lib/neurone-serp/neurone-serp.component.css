@@ -39,11 +39,12 @@ hr {
 .serp-container {
   margin-left: 12rem;
   margin-right: 5rem;
-  padding-bottom: 6rem;
+  padding-bottom: 1rem;
+
 }
 
 .search-small {
-  margin-top: 20px;
+  padding-top: 20px;
   margin-bottom: 40px;
   min-width: 1121px;
   height: 80px;

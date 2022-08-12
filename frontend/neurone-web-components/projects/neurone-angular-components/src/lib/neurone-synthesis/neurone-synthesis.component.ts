@@ -67,10 +67,6 @@ export class NeuroneSynthesisComponent implements OnInit, OnDestroy {
       this.getSnippets();
   }
 
-  testInput() {
-    console.log(this.synthForm.value, "\nWords: " + this.wordCount, "\nChars: " + this.charCount);
-  }
-
   removeHTML(htmlText: string) {
     let reducedText = htmlText.replace(/<[^>]+>/gm, ' ');  // dgacitua: Delete HTML markup
     reducedText = reducedText.replace(/\&nbsp;/g, ' ');   // remove &nbsp
@@ -96,7 +92,7 @@ export class NeuroneSynthesisComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (response: any) => {
           this.snippets = response.snippets;
-          console.log(this.snippets);
+          //console.log(this.snippets);
         },
         error: error => {
           console.error(error);
@@ -134,7 +130,7 @@ export class NeuroneSynthesisComponent implements OnInit, OnDestroy {
     this.http.post("http://localhost:" + NeuroneConfig.neuroneProfilePort + "/synthesis", answer)
       .subscribe({
         next: response => {
-          console.log(response);
+          //console.log(response);
           this.loading = false;
 
           if (autoSaved){

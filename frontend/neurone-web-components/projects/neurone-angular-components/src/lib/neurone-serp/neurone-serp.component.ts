@@ -1,36 +1,10 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, HostListener, Input, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, EventEmitter, HostListener, Input, OnInit, Output, ViewEncapsulation } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { PageEvent } from '@angular/material/paginator';
 import { AuthService } from '../auth.service';
 import { NeuroneConfig } from '../neurone-components-config';
-
-interface searchDocument {
-  docId_s: string, // id in the database
-  id: string, // unique name
-  title_t: string,
-  indexedBody_t: string,
-  url_t: string,
-  searchSnippet_t: string[],
-  relevant_b: boolean,
-  tags_t: string[]
-}
-
-// TODO: add task/domain
-interface logDocument {
-  userId: string,
-  userEmail: string,
-  date: number,
-  description:string,
-  query: string,
-  selectedPageName: string,
-  selectedPageUrl: string,
-  relevant: boolean,
-  currentPageNumber: number,
-  resultDocumentRank: number,
-  resultNumberTotal: number,
-  searchResults: string[]
-}
+import { searchDocument, logDocument, bookmark, snippet } from './serp-interfaces';
 
 @Component({
   selector: 'neurone-serp-component',
@@ -50,10 +24,20 @@ export class NeuroneSerpComponent implements OnInit {
   searchOnline = false;
   lastQuery = '';
 
-  @Input() logEnabled = true; // log for neurone-profile
-  @Input() refreshIndex = false; // request an index refresh to the search backend when loading the page, useful for dev
+  /** A log of user actions is sent to Neurone-Profile if this is enabled*/
+  @Input() logEnabled = true;
+  /** Request an index refresh to the search backend, Neurone-Search when the component is loaded, useful while downloading pages*/
+  @Input() refreshIndex = false;
+  /**Filters for the webpages if empty every page will be searched. To use multiple tags, separate with "-" */
   @Input() tags: string = '';
+  /**IMG url for the search logo, NEURONE by default */
   @Input() logoImgSrc = 'https://cdn.discordapp.com/attachments/999698056884801618/999698245347446854/searchlogo.png';
+
+  /**Number of bookmarks saved by the user */
+  @Output() bookmarksOutput = new EventEmitter<number>();
+  /**Number of text snippets saved by the user*/
+  @Output() snippetsOutput = new EventEmitter<number>();
+
 
   // pagination
   currentPage = 0;
@@ -66,6 +50,10 @@ export class NeuroneSerpComponent implements OnInit {
   documents: searchDocument[] = [];  // documents found by neurone-seach
   highlights: any;  // highlights for the documents, also provided by neurone search. it's an object with keys representing the doc ID
   routes: any; // routes of the downloaded documents, similar format to  highlights
+
+  bookmarks: bookmark[] = []; // search bookmarks, updated from Neurone-Search backend
+  snippets: snippet[] = []; // search snippets, updated from Neurone-Search backend
+
 
   // listen to iframe messages
   @HostListener('window:message', ['$event'])
@@ -84,40 +72,42 @@ export class NeuroneSerpComponent implements OnInit {
 
   ngOnInit(): void {
 
-    // prod mode: simply ping the main neurone-search page, dev mode: refresh neurone-search index
     this.loading = true;
 
     this.http.
-    get("http://localhost:" + NeuroneConfig.neuroneSearchPort, {responseType: 'text'})
-    .subscribe({
-      next: () => {
-        console.log("Connection with Neurone-Search back-end successful");
-        this.searchOnline = true;
-        this.loading = false;
-      },
-      error: (e) => {
-        console.error("Error connecting with Neurone-Search back-end.");
-        console.error(e);
-        this.loading = false;
-      }
-    });
+      get("http://localhost:" + NeuroneConfig.neuroneSearchPort, {responseType: 'text'})
+      .subscribe({
+        next: () => {
+          console.log("Connection with Neurone-Search back-end successful");
+          this.searchOnline = true;
+          this.loading = false;
+        },
+        error: (e) => {
+          console.error("Error connecting with Neurone-Search back-end.");
+          console.error(e);
+          this.loading = false;
+        }
+      });
 
     if (this.refreshIndex) {
       this.http.
         get("http://localhost:" + NeuroneConfig.neuroneSearchPort + "/refresh")
         .subscribe({
           next: () => {
-            console.log("Connection with Neurone-Search back-end successful, index refreshed (development mode).");
+            console.log("Index refreshed successfully.");
             this.searchOnline = true;
             this.loading = false;
           },
           error: (e) => {
-            console.error("Error connecting with Neurone-Search back-end.");
+            console.error("Could not refresh index, error connecting with Neurone-Search back-end.");
             console.error(e);
             this.loading = false;
           }
         });
     };
+
+    // update current number of bookmarks and snippets
+    this.getBookmarksAndSnippets(false);
 
   }
 
@@ -199,7 +189,7 @@ export class NeuroneSerpComponent implements OnInit {
    * @returns void
    */
   switchToPageMode(document: searchDocument, elem: HTMLElement) {
-    console.log("SWITCHING TO Page MODE: new url: ", this.routes[document.id]);
+    //console.log("SWITCHING TO Page MODE: new url: ", this.routes[document.id]);
 
     this.mode = 'page';
     this.selectedPageRoute = this.routes[document.id];
@@ -308,7 +298,6 @@ export class NeuroneSerpComponent implements OnInit {
     }
 
     this.fullScreenMode = false;
-    console.log("New Query:" + query);
     this.loading = true;
 
     this.http
@@ -317,7 +306,7 @@ export class NeuroneSerpComponent implements OnInit {
       next: (res: any) => {
 
         this.loading = false;
-        console.log(res);
+        //console.log(res);
 
         // save total number of docs found
         this.totalDocsFound = res.result.response.numFound;
@@ -337,9 +326,11 @@ export class NeuroneSerpComponent implements OnInit {
           this.routes[key] = "http://localhost:" + NeuroneConfig.neuroneSearchPort + "//" + this.routes[key];
         }
 
+        /*
         console.log("Documents is now: ", this.documents);
         console.log("Highlights is now: ", this.highlights);
         console.log("Routes is now: ", this.routes);
+        */
 
         // save log to database
         const logObj: logDocument = {
@@ -377,7 +368,7 @@ export class NeuroneSerpComponent implements OnInit {
       this.http.post("http://localhost:" + NeuroneConfig.neuroneProfilePort + "/logger/search/", logObj)
       .subscribe({
         next: (res: any) => {
-          console.log(res);
+          //console.log(res);
         },
         error: (err: any) => {
           console.error(err);
@@ -397,10 +388,13 @@ export class NeuroneSerpComponent implements OnInit {
 
     // find the url using the selected doc name
     const websiteUrlToSave = this.documents.find(elem => elem.id === this.selectedPageName)?.url_t;
+    // find the name of the website in the SERP
+    const websiteTitle = this.documents.find(elem => elem.id === this.selectedPageName)?.title_t;
 
     const bookmarkData = {
       userId: this.authService.getUserId(),
       website: this.selectedPageName,
+      websiteTitle: websiteTitle,
       websiteUrl: websiteUrlToSave,
       date: Date.now(),
       saved: this.bookmarkSaveMode === 'save' // true if save, false if unsave
@@ -409,7 +403,7 @@ export class NeuroneSerpComponent implements OnInit {
     let isBookmarkNew = true;
 
     // get bookmarks to check if the bookmark to save is already in the database, this will lead to a different api request depending on the result
-    this.http.get("http://localhost:" + NeuroneConfig.neuroneProfilePort + "/search/bookmark/saved/" + this.authService.getUserId())
+    this.http.get("http://localhost:" + NeuroneConfig.neuroneProfilePort + "/search/bookmark/all/" + this.authService.getUserId())
       .subscribe({
         next: (res: any) => {
 
@@ -422,32 +416,47 @@ export class NeuroneSerpComponent implements OnInit {
             }
           }
 
-          if (!isBookmarkNew) {
-          // update bookmark to be saved, if it's a new bookmark it will be created
-          this.http.put("http://localhost:" + NeuroneConfig.neuroneProfilePort + "/search/bookmark/" + this.authService.getUserId() + "/" + this.selectedPageName, bookmarkData)
-            .subscribe({
-              next: (res: any) => {
-                if (this.bookmarkSaveMode === 'save') {
-                  alert("Bookmark saved!");
-                  this.bookmarkSaveMode = 'unsave'
-                } else if (this.bookmarkSaveMode === 'unsave') {
-                  alert("Bookmark deleted!");
-                  this.bookmarkSaveMode = 'save'
-                }
 
-              },
-              error: (err) => {
-                alert("Bookmark could not be saved.");
-                console.error(err);
-              }
-            });
+          // update bookmark to be saved, if it's a new bookmark it will be created
+          if (!isBookmarkNew) {
+
+            this.http.put("http://localhost:" + NeuroneConfig.neuroneProfilePort + "/search/bookmark/" + this.authService.getUserId() + "/" + this.selectedPageName, bookmarkData)
+              .subscribe({
+                next: (res: any) => {
+
+                  //console.log("RES FROM SAVE BOOKMARK: ", res);
+
+                  this.bookmarks = res.data;
+                  this.bookmarksOutput.emit(this.bookmarks.length);
+
+                  if (this.bookmarkSaveMode === 'save') {
+                    alert("Bookmark saved!");
+                    this.bookmarkSaveMode = 'unsave'
+                  }
+                  else if (this.bookmarkSaveMode === 'unsave') {
+                    alert("Bookmark deleted!");
+                    this.bookmarkSaveMode = 'save'
+                  }
+
+                },
+                error: (err) => {
+                  alert("Bookmark could not be saved.");
+                  console.error(err);
+                }
+              });
           }
 
           // bookmark is new so we create it
           else {
             this.http.post("http://localhost:" + NeuroneConfig.neuroneProfilePort + "/search/bookmark", bookmarkData)
               .subscribe({
-                next: (res) => {
+                next: (res:any) => {
+
+                  //console.log("RES FROM SAVE BOOKMARK: ", res);
+
+                  this.bookmarks.push(res.data);
+                  this.bookmarksOutput.emit(this.bookmarks.length);
+
                   alert("Bookmark saved!");
                   this.bookmarkSaveMode = 'unsave';
                 },
@@ -470,9 +479,9 @@ export class NeuroneSerpComponent implements OnInit {
 
   /**
    * get saved bookmarks and snippets
-   * @alert should an alert pop up once data is received
+   * @shouldAlert should an alert pop up once data is received
    */
-  getBookmarks(shouldAlert: boolean) {
+  getBookmarksAndSnippets(shouldAlert: boolean) {
 
     if (!this.authService.getAuth()) {
       return;
@@ -481,22 +490,34 @@ export class NeuroneSerpComponent implements OnInit {
     this.http.get("http://localhost:" + NeuroneConfig.neuroneProfilePort + "/search/user/" + this.authService.getUserId())
       .subscribe({
         next: (res: any) => {
-          console.log(res);
-          if (shouldAlert){
-            let alertString = "Bookmarks:\n";
-            for (const bookmark of res.bookmarks) {
-              if (bookmark.saved){
-                alertString = alertString + bookmark.website + "\n";
-              }
-            }
-            alertString = alertString + "\nSnippets:\n"
-            for (const snippet of res.snippets) {
-              alertString = alertString + snippet.website + ": " + snippet.snippet + "\n\n";
-              console.log(snippet);
-            }
+          //console.log(res);
 
+          // build alert string, and rebuild the saved bookmarks array
+          let alertString = "Bookmarks:\n";
+          this.bookmarks = [];
+          for (const bookmark of res.bookmarks) {
+            if (bookmark.saved){
+              this.bookmarks.push(bookmark);
+              alertString = alertString + bookmark.websiteTitle + "\n";
+            }
+          }
+
+          // keep building the alert string, and rebuild the snippets array
+          alertString = alertString + "\nSnippets:\n"
+          this.snippets = [];
+          for (const snippet of res.snippets) {
+            this.snippets.push(snippet);
+            alertString = alertString + snippet.website + ": " + snippet.snippet + "\n\n";
+          }
+
+          // emit to parent module the number of bookmarks and snippets
+          this.bookmarksOutput.emit(this.bookmarks.length);
+          this.snippetsOutput.emit(this.snippets.length);
+
+          if (shouldAlert){
             alert(alertString);
           }
+
         },
           error: (err: any) => {
             console.error(err);
@@ -533,24 +554,20 @@ export class NeuroneSerpComponent implements OnInit {
     // find the url using the selected doc name
     const websiteUrlToSave = this.documents.find(elem => elem.id === this.selectedPageName)?.url_t;
 
-    // find the website title
-    const websiteTitleToSave = this.documents.find(elem => elem.id === this.selectedPageName)?.title_t;
-
     const snippetData = {
       userId: this.authService.getUserId(),
       snippet: snippet,
       website: this.selectedPageName,
       websiteUrl: websiteUrlToSave,
-      websiteTitle: websiteTitleToSave,
       date: Date.now()
     }
 
-    console.log("snippetData to send: ", snippetData);
     this.http.post("http://localhost:" + NeuroneConfig.neuroneProfilePort + "/search/snippet", snippetData)
       .subscribe({
         next: (res: any) => {
+
           alert("Snippet saved!");
-          console.log(res);
+          //console.log(res);
         },
         error: (err: any) => {
           alert("Snippet could not be saved.")
