@@ -44,7 +44,7 @@ export class ScrollLogDirective {
       h_doc : evt?.h_doc || document.documentElement.scrollHeight
     };
 
-    console.log("Neurone Logger Scroll data:\n", data);
+    //console.log("Neurone Logger Scroll data:\n", data);
 
     this.http.post("http://localhost:" + NeuroneConfig.neuroneProfilePort + "/logger/scroll", data).subscribe({
       next: (_ => {}),

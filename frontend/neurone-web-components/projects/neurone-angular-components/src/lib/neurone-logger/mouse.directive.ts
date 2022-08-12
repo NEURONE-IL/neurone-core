@@ -56,7 +56,7 @@ export class MouseLogDirective implements OnInit {
       h_doc : windowData?.h_doc || document.documentElement.scrollHeight
     };
 
-    console.log("Neurone Logger Mouse data:\n", data);
+    //console.log("Neurone Logger Mouse data:\n", data);
 
     this.http.post("http://localhost:" + NeuroneConfig.neuroneProfilePort + "/logger/mouse", data).subscribe({
       next: (_ => {}),

@@ -60,7 +60,7 @@ export class KeyboardLogDirective {
       char      : null // part of original neurone
     };
 
-    console.log("Neurone Logger Keyboard data:\n", data);
+    //console.log("Neurone Logger Keyboard data:\n", data);
 
     this.http.post("http://localhost:" + NeuroneConfig.neuroneProfilePort + "/logger/keyboard", data).subscribe({
       next: (_ => {}),

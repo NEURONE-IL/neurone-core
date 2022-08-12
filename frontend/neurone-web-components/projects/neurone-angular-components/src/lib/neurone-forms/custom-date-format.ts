@@ -1,7 +1,7 @@
 // for the datepicker
 export const CUSTOM_DATE_FORMATS = {
   parse: {
-    dateInput: 'MM-DD-YYYY',
+    dateInput: 'YYYY-MM-DD',
   },
   display: {
     dateInput: 'MMM DD, YYYY',

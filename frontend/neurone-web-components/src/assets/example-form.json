@@ -17,7 +17,7 @@
       "hint": "Example Hint",
       "name": "paraExample",
       "placeholder": "This is a placeholder.",
-      "rows": "4",
+      "rows": "10",
       "type": "paragraph",
       "validators": {
         "required": false,

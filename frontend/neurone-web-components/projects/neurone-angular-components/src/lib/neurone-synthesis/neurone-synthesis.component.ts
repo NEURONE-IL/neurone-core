@@ -81,13 +81,13 @@ export class NeuroneSynthesisComponent implements OnInit, OnDestroy {
   countWords(newText: string){
 
     const reducedText = this.removeHTML(newText);
-    const possibleCount = reducedText.match(/\S+/g);  // dgacitua: Count words
+    const possibleCount = reducedText.match(/\S+/g);  // Count words
 
     // null check
     if (possibleCount) {
       this.wordCount = possibleCount.length;
     }
-    this.charCount = reducedText.length;  // dgacitua: Count chars
+    this.charCount = reducedText.length;  // Count chars
   }
 
 

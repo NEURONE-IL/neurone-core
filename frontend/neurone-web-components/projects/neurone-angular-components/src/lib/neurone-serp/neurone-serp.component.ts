@@ -406,42 +406,66 @@ export class NeuroneSerpComponent implements OnInit {
       saved: this.bookmarkSaveMode === 'save' // true if save, false if unsave
     }
 
-    // update bookmark to be saved, if it's a new bookmark it will be created
-    this.http.put("http://localhost:" + NeuroneConfig.neuroneProfilePort + "/search/bookmark/" + this.authService.getUserId() + "/" + this.selectedPageName, bookmarkData)
+    let isBookmarkNew = true;
+
+    // get bookmarks to check if the bookmark to save is already in the database, this will lead to a different api request depending on the result
+    this.http.get("http://localhost:" + NeuroneConfig.neuroneProfilePort + "/search/bookmark/saved/" + this.authService.getUserId())
       .subscribe({
-        next: (res) => {
-          if (this.bookmarkSaveMode === 'save') {
-            alert("Bookmark saved!");
-            this.bookmarkSaveMode = 'unsave'
-          } else if (this.bookmarkSaveMode === 'unsave') {
-            alert("Bookmark deleted!");
-            this.bookmarkSaveMode = 'save'
+        next: (res: any) => {
+
+          // check if the bookmark is new (post request) or an already existing one (put request)
+          if (res.data) {
+            for (const bookmark of res.data) {
+              if (bookmark.website === this.selectedPageName){
+                isBookmarkNew = false;
+              }
+            }
           }
-          console.log(res);
 
-        },
-        error: (err) => {
+          if (!isBookmarkNew) {
+          // update bookmark to be saved, if it's a new bookmark it will be created
+          this.http.put("http://localhost:" + NeuroneConfig.neuroneProfilePort + "/search/bookmark/" + this.authService.getUserId() + "/" + this.selectedPageName, bookmarkData)
+            .subscribe({
+              next: (res: any) => {
+                if (this.bookmarkSaveMode === 'save') {
+                  alert("Bookmark saved!");
+                  this.bookmarkSaveMode = 'unsave'
+                } else if (this.bookmarkSaveMode === 'unsave') {
+                  alert("Bookmark deleted!");
+                  this.bookmarkSaveMode = 'save'
+                }
 
-          // resource not found so we create it
-          if (err.status === 404) {
+              },
+              error: (err) => {
+                alert("Bookmark could not be saved.");
+                console.error(err);
+              }
+            });
+          }
+
+          // bookmark is new so we create it
+          else {
             this.http.post("http://localhost:" + NeuroneConfig.neuroneProfilePort + "/search/bookmark", bookmarkData)
               .subscribe({
                 next: (res) => {
                   alert("Bookmark saved!");
-                  console.log(res);
+                  this.bookmarkSaveMode = 'unsave';
                 },
                 error: (err) => {
                   alert("Bookmark could not be saved.");
                   console.error(err);
                 }
-              })
+              });
           }
-          else {
-            alert("Bookmark could not be saved.");
-            console.error(err);
-          }
+
+
+        },
+        error: (err) => {
+          console.error(err);
         }
-      });
+      })
+
+
   }
 
   /**
@@ -461,10 +485,11 @@ export class NeuroneSerpComponent implements OnInit {
           if (shouldAlert){
             let alertString = "Bookmarks:\n";
             for (const bookmark of res.bookmarks) {
-              alertString = alertString + bookmark.website + "\n\n";
-              console.log(bookmark)
+              if (bookmark.saved){
+                alertString = alertString + bookmark.website + "\n";
+              }
             }
-            alertString = alertString + "Snippets:\n"
+            alertString = alertString + "\nSnippets:\n"
             for (const snippet of res.snippets) {
               alertString = alertString + snippet.website + ": " + snippet.snippet + "\n\n";
               console.log(snippet);

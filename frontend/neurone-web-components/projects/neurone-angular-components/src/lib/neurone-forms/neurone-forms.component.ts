@@ -68,11 +68,14 @@ export class NeuroneFormsComponent implements OnInit {
       this.loadForm(this.formName);
     }
 
+    // properly know login status on init
+    this.userIsAuthenticated = this.authService.getAuth();
+
     // we get the login status from the service
     this.authListenerSubs = this.authService
       .getAuthStatusListener()
       .subscribe( isAuthenticated => {
-        // with this we update the login status in this header
+        // with this we update the login status
         this.userIsAuthenticated = isAuthenticated;
         this.isLoading = false;
         // reload form if user is logged in now
