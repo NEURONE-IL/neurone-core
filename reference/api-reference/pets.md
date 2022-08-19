@@ -1,3 +1,7 @@
+---
+description: Template for Git-book, ignore. Documentation WIP.
+---
+
 # Pets
 
 ## Creating a new pet
