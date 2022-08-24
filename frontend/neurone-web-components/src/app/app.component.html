@@ -1,18 +1,25 @@
-<neurone-navbar-component></neurone-navbar-component>
+<neurone-navbar-component text="NEURONE"></neurone-navbar-component>
 <div class="neurone-demo" neurone-logger-mouse neurone-logger-keyboard neurone-logger-scroll neurone-input-restricter>
   <neurone-serp-component
     (bookmarksOutput)="serpBookmarks=($event)"
     (snippetsOutput)="serpSnippets=($event)"
     tags=""
     [logEnabled]="true"
-    [refreshIndex]="false"
+    [refreshIndex]="true"
     >
   </neurone-serp-component>
   <mat-card>
     <mat-card-header>SERP number of bookmarks: {{serpBookmarks}}</mat-card-header>
     <mat-card-header>SERP number of snippets: {{serpSnippets}}</mat-card-header>
   </mat-card>
-  <neurone-forms-component *ngIf="!hasSubmittedForm" mode="local" form="assets/example-form.json" appearance="outline" (userHasSubmitted)="updateSubmittedForm($event)"></neurone-forms-component>
-  <div *ngIf="hasSubmittedForm"><mat-card>Thanks for the answer!</mat-card></div>
+  <neurone-forms-component
+    *ngIf="!hasSubmittedForm"
+    mode="local"
+    form="assets/example-form.json"
+    appearance="outline"
+    (userHasSubmitted)="updateSubmittedForm($event)"
+    >
+  </neurone-forms-component>
+  <div *ngIf="hasSubmittedForm"><mat-card>Thanks for answering!</mat-card></div>
   <neurone-synthesis-component [autosaveDisabled]="false" [autosaveInterval]="5"></neurone-synthesis-component>
 </div>
