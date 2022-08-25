@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component, EventEmitter, HostListener, Input, OnInit, Output, ViewEncapsulation } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { PageEvent } from '@angular/material/paginator';
+import { Subscription } from 'rxjs';
 import { AuthService } from '../auth.service';
 import { NeuroneConfig } from '../neurone-components-config';
 import { searchDocument, logDocument, bookmark, snippet } from './serp-interfaces';
@@ -16,7 +17,6 @@ export class NeuroneSerpComponent implements OnInit {
 
   mode: 'serp' | 'page' = 'serp';
   fullScreenMode = true;
-  showUserSaveButtons = false;
   selectedPageName = ''; // name of the document that serves as an id
   selectedPageRoute: string = ''; // route in the server for current page for the page mode
   bookmarkSaveMode: 'save' | 'unsave' = 'save';
@@ -54,6 +54,8 @@ export class NeuroneSerpComponent implements OnInit {
   bookmarks: bookmark[] = []; // search bookmarks, updated from Neurone-Search backend
   snippets: snippet[] = []; // search snippets, updated from Neurone-Search backend
 
+  userIsAuthenticated = false;
+  private authStatusSubs: Subscription = new Subscription;
 
   // listen to iframe messages
   @HostListener('window:message', ['$event'])
@@ -106,8 +108,19 @@ export class NeuroneSerpComponent implements OnInit {
         });
     };
 
-    // update current number of bookmarks and snippets
+    // get bookmarks and snippets
     this.getBookmarksAndSnippets(false);
+
+    // listen for login status from the neurone auth service
+    this.authStatusSubs = this.authService
+      .getAuthStatusListener()
+      .subscribe( isAuthenticated => {
+        this.userIsAuthenticated = isAuthenticated;
+        this.getBookmarksAndSnippets(false);
+
+      });
+    // initial auth status
+    this.userIsAuthenticated = this.authService.getAuth();
 
   }
 
@@ -194,8 +207,7 @@ export class NeuroneSerpComponent implements OnInit {
     this.mode = 'page';
     this.selectedPageRoute = this.routes[document.id];
     this.selectedPageName = document.id;
-    // only show buttons if the user is logged in
-    this.showUserSaveButtons = this.authService.getAuth();
+
 
     // scroll to toolbar
     elem.scrollIntoView({behavior: 'smooth'});
@@ -484,6 +496,10 @@ export class NeuroneSerpComponent implements OnInit {
   getBookmarksAndSnippets(shouldAlert: boolean) {
 
     if (!this.authService.getAuth()) {
+      this.bookmarks = [];
+      this.snippets = [];
+      this.snippetsOutput.emit(0);
+      this.bookmarksOutput.emit(0);
       return;
     }
 
@@ -507,7 +523,7 @@ export class NeuroneSerpComponent implements OnInit {
           this.snippets = [];
           for (const snippet of res.snippets) {
             this.snippets.push(snippet);
-            alertString = alertString + snippet.website + ": " + snippet.snippet + "\n\n";
+            alertString = alertString + snippet.websiteTitle + ": " + snippet.snippet + "\n\n";
           }
 
           // emit to parent module the number of bookmarks and snippets

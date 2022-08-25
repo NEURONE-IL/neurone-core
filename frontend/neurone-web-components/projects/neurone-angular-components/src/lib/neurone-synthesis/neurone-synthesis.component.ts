@@ -59,12 +59,13 @@ export class NeuroneSynthesisComponent implements OnInit, OnDestroy {
       .getAuthStatusListener()
       .subscribe( isAuthenticated => {
         this.userIsAuthenticated = isAuthenticated;
+        this.getSnippets();
       });
     // initial auth status
     this.userIsAuthenticated = this.authService.getAuth();
 
-      // get search snippets
-      this.getSnippets();
+    // get search snippets
+    this.getSnippets();
   }
 
   removeHTML(htmlText: string) {
@@ -88,6 +89,12 @@ export class NeuroneSynthesisComponent implements OnInit, OnDestroy {
 
 
   getSnippets() {
+
+    if (!this.userIsAuthenticated) {
+      this.snippets = [];
+      return;
+    }
+
     this.http.get("http://localhost:" + NeuroneConfig.neuroneProfilePort + "/search/snippet/" + this.authService.getUserId())
       .subscribe({
         next: (response: any) => {

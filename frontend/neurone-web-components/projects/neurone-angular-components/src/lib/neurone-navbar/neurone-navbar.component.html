@@ -1,6 +1,6 @@
 <p>
   <mat-toolbar color="primary">
-    <span class="spacer"><a routerLink="/">NEURONE</a></span>
+    <span class="spacer"><a routerLink="/">{{ logoText }}</a></span>
     <ul>
       <li *ngIf="!userIsAuthenticated">
         <a mat-button (click)="cardMode='signin'" >Login</a>
@@ -14,7 +14,7 @@
     </ul>
   </mat-toolbar>
 </p>
-<div *ngIf="!userIsAuthenticated && cardMode != 'hidden'">
+<div *ngIf="!userIsAuthenticated && cardMode !== 'hidden'">
   <mat-card>
     <mat-spinner *ngIf="isLoading"></mat-spinner>
     <form (submit)="onCardButtonClick(loginForm)" #loginForm="ngForm" *ngIf="!isLoading">

@@ -50,9 +50,9 @@
   <mat-toolbar style="min-height:10px" color="primary">
     <button mat-raised-button (click)="switchToSerpMode()">Return to Search Results</button>
     <span class="spacer"></span>
-    <button *ngIf="showUserSaveButtons" style="margin-left: 1rem" mat-raised-button (click)="getBookmarksAndSnippets(true)">Get and show user data</button>
-    <button *ngIf="showUserSaveButtons" style="margin-left: 1rem" mat-raised-button (click)="sendSnippetRequest(neuronePage)">Save Snippet</button>
-    <button *ngIf="showUserSaveButtons" style="margin-left: 1rem" mat-raised-button (click)="saveBookmark()">{{bookmarkSaveMode === 'save' ? 'Save Bookmark' : 'Unsave Bookmark'}}</button>
+    <button *ngIf="userIsAuthenticated" style="margin-left: 1rem" mat-raised-button (click)="getBookmarksAndSnippets(true)">Get and show user data</button>
+    <button *ngIf="userIsAuthenticated" style="margin-left: 1rem" mat-raised-button (click)="sendSnippetRequest(neuronePage)">Save Snippet</button>
+    <button *ngIf="userIsAuthenticated" style="margin-left: 1rem" mat-raised-button (click)="saveBookmark()">{{bookmarkSaveMode === 'save' ? 'Save Bookmark' : 'Unsave Bookmark'}}</button>
   </mat-toolbar>
   <iframe
     #neuronePage

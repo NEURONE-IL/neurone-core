@@ -5,7 +5,9 @@ ng add @angular/material
 npm i @angular/elements
 npm i lodash.throttle
 npm i @types/lodash.throttle
-npm install ngx-wig@12.0.0
+npm i ngx-wig@12.0.0
+npm i @angular/material-moment-adapter@13.3.9
+npm i moment@"2.29.4",
 npm i neurone-angular-components
 ```
 
@@ -24,6 +26,7 @@ npm i neurone-angular-components
 neurone-logger-mouse
 neurone-logger-keyboard
 neurone-logger-scroll
+neurone-input-restricter
 ```
 
 # Use of Auth Service from components
