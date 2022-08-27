@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit, ViewEncapsulation } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { AuthService } from "../auth.service";
@@ -9,6 +9,9 @@ import { AuthService } from "../auth.service";
   styleUrls: ['./neurone-navbar.component.css']
 })
 export class NeuroneNavbarComponent implements OnInit {
+
+  /**The text that appears at the left side of the navbar */
+  @Input('text') logoText = "NEURONE";
 
   userIsAuthenticated = false;
   cardMode: "hidden" | "signin" | "signup" = "hidden";
