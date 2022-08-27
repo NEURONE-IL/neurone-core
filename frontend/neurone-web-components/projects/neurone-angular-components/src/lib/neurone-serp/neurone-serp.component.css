@@ -76,10 +76,11 @@ hr {
 }
 
 .search-big-input-box {
-  position: relative;
-  display: block;
-  margin-left: 29%;
-  width: 100%;
+    display:flex;
+    /* items are centered along the line */
+    justify-content: center;
+    /* center: items are centered in the cross-axis */
+    align-items: center;
 }
 
 .document {
