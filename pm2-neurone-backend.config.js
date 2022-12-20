@@ -16,7 +16,7 @@ module.exports = {
   },
   {
     name   : "Neurone Profile",
-    script : "cd ./backend/neurone-profile/ && npm install && tsc && node dist/app.js",
+    script : "cd ./backend/neurone-profile/ && npm install && tsc && node dist/src/app.js",
     env    : {
       "PORT": "3002",
       "NEURONE_AUTH_PORT": "3005",
